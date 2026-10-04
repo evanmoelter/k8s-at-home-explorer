@@ -1,71 +1,42 @@
-# kubesearch.dev
-Search Flux HelmReleases through [awesome k8s-at-home](https://github.com/k8s-at-home/awesome-home-kubernetes) projects, check it out at https://kubesearch.dev/. We index Flux HelmReleases from Github and Gitlab repositories with the [k8s-at-home topic](https://github.com/topics/k8s-at-home) and [kubesearch topic](https://github.com/topics/kubesearch). To include your repository in this search it must be public and then add the topic `k8s-at-home` or `kubesearch` to your GitHub Repository topics.
+# Kubernetes community agent explorer
 
-Thanks to Toboshii and [Hajimari](https://github.com/toboshii/hajimari) for regulating icons to helm charts.
+Composable tools for researching deployment patterns and discovering applications in community Kubernetes repositories.
 
-And also thanks to k8s@home community for great charts and configurations.
+The service indexes the latest completed scan of each repository in a local bare Git corpus and exposes 13 read-only tools through MCP and a JSON CLI. Agents can combine exact source search, structured infrastructure filters, semantic retrieval, and resource graph traversal. Every family shares commit-pinned source identifiers.
 
-<img width="848" alt="image" src="https://user-images.githubusercontent.com/184182/152700148-2f41a576-7ae4-4ed5-b14c-840347787036.png">
+A successful refresh replaces the previous scan; a failed refresh keeps the previous published scan available. PostgreSQL stores the derived indexes; the embedding provider is configurable.
 
-<img width="848" alt="image" src="https://user-images.githubusercontent.com/184182/152700157-b9c79d7b-d793-4bb9-b422-d3ed882b4035.png">
+## Start locally
 
-## development
-Overview:
-```mermaid
-graph LR
-    I[interesting.py]
-    I-->|repos.json|Init[init-db.py]
-    Init-->|repos.db: repos|download[download.py]
-    Init-->|repos.db: repos|search
-    download-->|repos/ submodules|search[search.py]
-    search-->|repos.db: repos,charts|frontend
+```sh
+mise trust
+mise install
+mise run setup
+mise run check
+mise run test
+mise run test:integration
+mise run local:up
+mise run local:smoke
+mise run local:forward
 ```
 
-**To build repos.db (optional for frontend, check step below)**
+The MCP endpoint is `http://localhost:8000/mcp`. The dedicated kind cluster starts with an empty catalogue. Add repositories to `deploy/local/repositories.yaml` and rerun `mise run local:up` to start ingestion. The default CLI catalogue in `config/repositories.yaml` contains HCC, onedr0p, and bjw-s as a small pilot; the inherited `repos.json` catalogue is also supported.
 
-Python requirements: `pip install -r requirements.txt`
+- [Development and configuration](docs/development.md)
+- [Tool reference and example workflows](docs/tools.md)
+- [Local Kubernetes and reusable Helm deployment](docs/deployment.md)
+- [Architecture](docs/designs/20261004-agent-explorer.md)
+- [Decision log and decision owners](docs/decisions.md)
+- [Pilot evidence and limitations](docs/evaluation.md)
 
-Updating `repos.json` (can be skipped, already included in source):
-```
-python3 interesting.py
-```
+Source tools accept a repository ID and an optional expected snapshot ID to reject stale reads during refresh. Historical browsing belongs in upstream Git; this service searches only the latest completed scan.
 
-Setting up `repos.db` repos table (requires `repos.json`):
-```
-python3 init-db.py
-```
+Semantic tools report unavailable until an HTTP embedding endpoint, model, and dimensions are configured. Graph resolution uses raw source evidence; generated resources and unresolved substitutions are reported as unresolved. Repository presence does not establish app integration.
 
-Download repos into `repos/` (requires repo.db):
-```
-python3 download.py
-```
+## Published service image
 
-Setting up `repos.db` charts table:
-```
-python3 search.py
-```
+CI publishes `ghcr.io/evanmoelter/k8s-at-home-explorer` for Linux AMD64 and ARM64 after validation. Main builds use `edge` and `sha-<full-commit>`; version tags add release tags. API, worker, and initializer share this image. Pin the workflow's output digest for production; see [deployment and package visibility](docs/deployment.md#image-publication).
 
-**Setting up the frontend**
+## Inherited human explorer
 
-```
-wget https://github.com/Whazor/k8s-at-home-search/releases/latest/download/repos.db.zz -P frontend/public/
-wget https://github.com/Whazor/k8s-at-home-search/releases/latest/download/repos-extended.db.zz -P frontend/public/
-
-cd frontend/
-yarn install
-yarn run dev
-```
-
-### tables
-
-**repo**
-| **column name** | repo_name        | url                                | branch          | stars   |
-|-----------------|------------------|------------------------------------|-----------------|---------|
-| **value**       | text primary key | text                               | text            | integer |
-| **example**     | user-reponame    | "https://github.com/user/reponame" | main/master/... | 42      |
-
-**flux_helm_release**
-| **column name** | chart_name | repo_name     | url                                                                 | hajimari_icon | timestamp  |
-|-----------------|------------|---------------|---------------------------------------------------------------------|---------------|------------|
-| **value**       | text       | text          | text                                                                | text null     | integer    |
-| **example**     | plex       | user-reponame | "https://github.com/user/reponame/.../../traefik/helm-release.yaml" | tv            | 1644404532 |
+The existing `web/` UI and root scanner scripts remain available. Their [original README](docs/legacy-human-explorer.md) describes the legacy workflow. The new Python service has its own locked dependencies and deployment pipeline.

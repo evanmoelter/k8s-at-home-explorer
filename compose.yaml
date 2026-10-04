@@ -1,0 +1,23 @@
+name: k8s-explorer-dev
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.6-pg17-trixie@sha256:724a4041afdb1750446e3f6b5cfa8f3b0ac5a2cf538ddfa6bfee4f94c2fa85c6
+    environment:
+      POSTGRES_DB: explorer
+      POSTGRES_USER: explorer
+      POSTGRES_PASSWORD: ${EXPLORER_LOCAL_DATABASE_PASSWORD:?Set a disposable database password}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "127.0.0.1:${EXPLORER_LOCAL_DATABASE_PORT:-55432}:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U explorer -d explorer"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 1g
+volumes:
+  postgres:

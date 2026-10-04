@@ -1,0 +1,150 @@
+# Values for bjw-s-labs app-template 5.2.1. Pin the published image digest for production.
+# Database and API credentials come from an existing Secret in the release namespace.
+controllers:
+  explorer:
+    replicas: 1
+    strategy: Recreate
+    pod:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 568
+        runAsGroup: 568
+        runAsNonRoot: true
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    initContainers:
+      init-db:
+        image:
+          repository: ghcr.io/evanmoelter/k8s-at-home-explorer
+          tag: edge
+          pullPolicy: Always
+        args:
+        - init-db
+        env:
+          EXPLORER_HOST: 0.0.0.0
+          EXPLORER_CORPUS_DIR: /data/corpus
+          EXPLORER_REPOSITORIES_FILE: /config/repositories.yaml
+          EXPLORER_ALLOWED_HTTP_HOSTS: '["k8s-explorer", "localhost", "127.0.0.1"]'
+          EXPLORER_DATABASE_URL:
+            valueFrom:
+              secretKeyRef:
+                name: explorer-credentials
+                key: EXPLORER_DATABASE_URL
+        securityContext: &container-security
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        resources: &api-resources
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            memory: 512Mi
+    containers:
+      api:
+        image:
+          repository: ghcr.io/evanmoelter/k8s-at-home-explorer
+          tag: edge
+          pullPolicy: Always
+        args:
+        - serve
+        env:
+          EXPLORER_HOST: 0.0.0.0
+          EXPLORER_CORPUS_DIR: /data/corpus
+          EXPLORER_REPOSITORIES_FILE: /config/repositories.yaml
+          EXPLORER_ALLOWED_HTTP_HOSTS: '["k8s-explorer", "localhost", "127.0.0.1"]'
+          EXPLORER_DATABASE_URL:
+            valueFrom:
+              secretKeyRef:
+                name: explorer-credentials
+                key: EXPLORER_DATABASE_URL
+          EXPLORER_API_TOKEN:
+            valueFrom:
+              secretKeyRef:
+                name: explorer-credentials
+                key: EXPLORER_API_TOKEN
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health/live
+                port: 8000
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health/ready
+                port: 8000
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health/live
+                port: 8000
+              failureThreshold: 30
+              periodSeconds: 3
+        securityContext: *container-security
+        resources: *api-resources
+      worker:
+        image:
+          repository: ghcr.io/evanmoelter/k8s-at-home-explorer
+          tag: edge
+          pullPolicy: Always
+        args:
+        - worker
+        env:
+          EXPLORER_HOST: 0.0.0.0
+          EXPLORER_CORPUS_DIR: /data/corpus
+          EXPLORER_REPOSITORIES_FILE: /config/repositories.yaml
+          EXPLORER_ALLOWED_HTTP_HOSTS: '["k8s-explorer", "localhost", "127.0.0.1"]'
+          EXPLORER_DATABASE_URL:
+            valueFrom:
+              secretKeyRef:
+                name: explorer-credentials
+                key: EXPLORER_DATABASE_URL
+        securityContext: *container-security
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: '2'
+            memory: 1Gi
+service:
+  app:
+    controller: explorer
+    ports:
+      http:
+        port: 8000
+    type: ClusterIP
+configMaps:
+  config:
+    data:
+      repositories.yaml: |
+        repositories: []
+persistence:
+  corpus:
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    retain: true
+    globalMounts:
+    - path: /data
+  config:
+    type: configMap
+    identifier: config
+    globalMounts:
+    - path: /config
+      readOnly: true
+  tmp:
+    type: emptyDir
+    globalMounts:
+    - path: /tmp

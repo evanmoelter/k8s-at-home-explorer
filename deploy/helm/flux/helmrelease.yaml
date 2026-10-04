@@ -1,0 +1,21 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: k8s-explorer
+spec:
+  interval: 30m
+  releaseName: k8s-explorer
+  chartRef:
+    kind: OCIRepository
+    name: k8s-explorer
+  valuesFrom:
+    - kind: ConfigMap
+      name: k8s-explorer-values
+      valuesKey: values.yaml
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3

@@ -1,0 +1,137 @@
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/v1/persistentvolumeclaim.json
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: k8s-explorer-corpus
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 10Gi
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/v1/service.json
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-explorer
+spec:
+  selector:
+    app.kubernetes.io/name: k8s-explorer
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/apps/v1/deployment.json
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-explorer
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: k8s-explorer
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: k8s-explorer
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: init-db
+          image: k8s-explorer:local
+          imagePullPolicy: Never
+          args: [init-db]
+          env: &env
+            - name: EXPLORER_DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: k8s-explorer-database
+                  key: uri
+            - name: EXPLORER_CORPUS_DIR
+              value: /data/corpus
+            - name: EXPLORER_REPOSITORIES_FILE
+              value: /config/repositories.yaml
+            - name: EXPLORER_HOST
+              value: 0.0.0.0
+            - name: EXPLORER_ALLOWED_HTTP_HOSTS
+              value: '["localhost", "127.0.0.1", "k8s-explorer", "explorer.local"]'
+          securityContext: &security
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+          resources: &resources
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              memory: 512Mi
+          volumeMounts: &mounts
+            - name: corpus
+              mountPath: /data
+            - name: config
+              mountPath: /config
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      containers:
+        - name: api
+          image: k8s-explorer:local
+          imagePullPolicy: Never
+          args: [serve]
+          env: *env
+          ports:
+            - containerPort: 8000
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+          startupProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            failureThreshold: 30
+            periodSeconds: 3
+          securityContext: *security
+          resources: *resources
+          volumeMounts: *mounts
+        - name: worker
+          image: k8s-explorer:local
+          imagePullPolicy: Never
+          args: [worker]
+          env: *env
+          securityContext: *security
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: '2'
+              memory: 1Gi
+          volumeMounts: *mounts
+      volumes:
+        - name: corpus
+          persistentVolumeClaim:
+            claimName: k8s-explorer-corpus
+        - name: config
+          configMap:
+            name: k8s-explorer-config
+        - name: tmp
+          emptyDir: {}
