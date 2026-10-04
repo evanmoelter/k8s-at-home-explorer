@@ -91,6 +91,35 @@ def test_embedding_config_requires_whole_provider():
     assert settings.embedding_model == "chosen-model"
 
 
+def test_provider_settings_environment_metadata_and_output_dimensions(tmp_path, monkeypatch):
+    monkeypatch.setenv("EXPLORER_EMBEDDING_PROTOCOL", "tei")
+    monkeypatch.setenv("EXPLORER_EMBEDDING_QUERY_PROMPT_NAME", "query")
+    monkeypatch.setenv("EXPLORER_EMBEDDING_MODEL_REVISION", "pinned-model-sha")
+    monkeypatch.setenv("EXPLORER_EMBEDDING_REQUESTED_DIMENSIONS", "384")
+    monkeypatch.setenv("EXPLORER_EMBEDDING_REQUEST_TIMEOUT_SECONDS", "300")
+    settings = Settings(
+        corpus_dir=tmp_path,
+        embedding_url="http://localhost:8080/embed",
+        embedding_model="Qwen/example",
+        embedding_dimensions=384,
+        embedding_api_key="private-test-key",
+    )
+    configured = Explorer(settings)
+    result = configured.call("describe_indexes", {})["semantic_provider"]
+    assert result["protocol"] == "tei" and result["query_prompt_name"] == "query"
+    assert result["model_revision"] == "pinned-model-sha" and result["requested_dimensions"] == 384
+    assert result["request_timeout_seconds"] == 300
+    assert "private-test-key" not in json.dumps(result)
+    with pytest.raises(ValidationError, match="match"):
+        Settings(embedding_url="http://localhost/embed", embedding_model="m", embedding_dimensions=1024)
+
+
+@pytest.mark.parametrize("timeout", [0, 1801, float("nan"), float("inf")])
+def test_embedding_timeout_settings_are_bounded(timeout):
+    with pytest.raises(ValidationError):
+        Settings(embedding_request_timeout_seconds=timeout)
+
+
 def test_result_byte_budget_preserves_pagination():
     response = result_budget({"items": [{"text": "x" * 1000}] * 10}, offset=20, max_bytes=3000)
     assert 0 < len(response["items"]) < 10

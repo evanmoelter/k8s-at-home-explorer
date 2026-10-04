@@ -1,0 +1,1512 @@
+{
+  "schema_version": 1,
+  "corpus_id": "d867bcd1de0b34f40bf55cce53e0ed7864d12692fdd36fde64fab85a13662409",
+  "purpose": "calibration",
+  "judgment_coverage": "sparse",
+  "queries": [
+    {
+      "id": "pilot-001",
+      "text": "Back up a persistent volume to a restic repository using CSI snapshots.",
+      "category": "conceptual",
+      "group_id": "volsync-backup",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "5fe59bd558315752dc4bc7a4b05c5e42",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/components/volsync/backup/replicationsource.yaml",
+            "start_line": 2,
+            "end_line": 34,
+            "content_hash": "80eecf72b530ccbb9e1db3b7d54910d891d872fddf0bddcb417dafe54199df71"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-002",
+      "text": "Configure the VolSync ReplicationSource copyMethod and volumeSnapshotClassName.",
+      "category": "configuration",
+      "group_id": "volsync-backup",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "5fe59bd558315752dc4bc7a4b05c5e42",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/components/volsync/backup/replicationsource.yaml",
+            "start_line": 2,
+            "end_line": 34,
+            "content_hash": "80eecf72b530ccbb9e1db3b7d54910d891d872fddf0bddcb417dafe54199df71"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-003",
+      "text": "Find restic retain daily weekly monthly and pruneIntervalDays settings.",
+      "category": "identifier",
+      "group_id": "volsync-backup",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "5fe59bd558315752dc4bc7a4b05c5e42",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/components/volsync/backup/replicationsource.yaml",
+            "start_line": 2,
+            "end_line": 34,
+            "content_hash": "80eecf72b530ccbb9e1db3b7d54910d891d872fddf0bddcb417dafe54199df71"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-004",
+      "text": "Build RESTIC_REPOSITORY and AWS credentials from a Cloudflare R2 ExternalSecret.",
+      "category": "configuration",
+      "group_id": "volsync-credentials",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "424442f880a25fed559b9f14ef76f73b",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/components/volsync/backup/externalsecret.yaml",
+            "start_line": 2,
+            "end_line": 38,
+            "content_hash": "bc6c38e14d20a0079cad572eff1a1ee22f37b0e3bc86e30bbf636bcfa4a3da8a"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-005",
+      "text": "Order restore preflight, storage, application startup and backups during a PVC migration.",
+      "category": "conceptual",
+      "group_id": "volsync-lifecycle",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "f93af783063505c079f15daeb87deced",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/components/volsync/README.md",
+            "start_line": 1,
+            "end_line": 76,
+            "content_hash": "d4caf708ef2bcc39a067f4cdadf3ade2f9d3e3584629bf71bdfbc53b372d3798"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-006",
+      "text": "Fail a restore preflight when the restic repository has no valid snapshot for host volsync and path /data.",
+      "category": "conceptual",
+      "group_id": "volsync-preflight",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "6ecd09d160ccdc4d1646f712fb330c61",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/components/volsync/restore-preflight/preflight.py",
+            "start_line": 1,
+            "end_line": 36,
+            "content_hash": "c63a44343fc04e622f446b2589dfd5d4673c2034b7933f71f0cef796bd882a13"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-007",
+      "text": "Trigger a manual VolSync ReplicationDestination restore with a restore ID.",
+      "category": "configuration",
+      "group_id": "volsync-restore",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "039c72dcb6ddff357065f37387b65b2f",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/components/volsync/restore/replicationdestination.yaml",
+            "start_line": 2,
+            "end_line": 34,
+            "content_hash": "209e1157bcc796e062352def04413de7177f659ca92ea02d49de87354e6c5230"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-008",
+      "text": "Explain why a Longhorn restore must retain its temporary data PVC until application data verification.",
+      "category": "conceptual",
+      "group_id": "volsync-lifecycle",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "f93af783063505c079f15daeb87deced",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/components/volsync/README.md",
+            "start_line": 1,
+            "end_line": 76,
+            "content_hash": "d4caf708ef2bcc39a067f4cdadf3ade2f9d3e3584629bf71bdfbc53b372d3798"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-009",
+      "text": "Bootstrap a CloudNativePG cluster by recovery from a Barman plugin external cluster.",
+      "category": "configuration",
+      "group_id": "cnpg-cluster",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": "Cluster",
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "9a6455bff911413b3b5554511ad7a86f",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/components/postgres/cluster.yaml",
+            "start_line": 2,
+            "end_line": 56,
+            "content_hash": "902793a6c1c41aed638cdfc78b31249a067a9fce42d26dd95b72a4f1e61267e3"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-010",
+      "text": "Find enableSuperuserAccess false and readOnlyRootFilesystem in a CNPG Cluster.",
+      "category": "identifier",
+      "group_id": "cnpg-cluster",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": "Cluster",
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "9a6455bff911413b3b5554511ad7a86f",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/components/postgres/cluster.yaml",
+            "start_line": 2,
+            "end_line": 56,
+            "content_hash": "902793a6c1c41aed638cdfc78b31249a067a9fce42d26dd95b72a4f1e61267e3"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-011",
+      "text": "Archive PostgreSQL data and WAL to object storage with compression and retention.",
+      "category": "conceptual",
+      "group_id": "cnpg-objectstore",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "bcf920c695d0cc0e8c1f44e86ff1cb9a",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/components/postgres/objectstore.yaml",
+            "start_line": 2,
+            "end_line": 34,
+            "content_hash": "404e34b0e6d34aafef5d54f44f6efc4ac136b43e76cc1ecdbb900cc927c2fb52"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-012",
+      "text": "Find ObjectStore s3Credentials accessKeyId secretAccessKey and AWS_ENDPOINT_URL_S3.",
+      "category": "identifier",
+      "group_id": "cnpg-objectstore",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": "ObjectStore",
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "bcf920c695d0cc0e8c1f44e86ff1cb9a",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/components/postgres/objectstore.yaml",
+            "start_line": 2,
+            "end_line": 34,
+            "content_hash": "404e34b0e6d34aafef5d54f44f6efc4ac136b43e76cc1ecdbb900cc927c2fb52"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-013",
+      "text": "Schedule CNPG backups with method plugin and barman-cloud.cloudnative-pg.io.",
+      "category": "configuration",
+      "group_id": "cnpg-scheduled-backup",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": "ScheduledBackup",
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "bc0ab3e6f8f73d8b256cd3f082838d69",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/components/postgres/scheduledbackup.yaml",
+            "start_line": 2,
+            "end_line": 14,
+            "content_hash": "da23c8e4886b27519593f253016660d8dee9c7959f7911da6f86ccfe51a026aa"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-014",
+      "text": "Integrate Mealie login with an Authentik OIDC discovery endpoint and admin groups.",
+      "category": "conceptual",
+      "group_id": "mealie-application",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "114119124ed93e726b8ede684c562a3a",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/default/mealie/app/helmrelease.yaml",
+            "start_line": 2,
+            "end_line": 167,
+            "content_hash": "52847ad42edde8afccf725569ef43105c436561e616edcb8ea431a7b1bd7e217"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-015",
+      "text": "Read Mealie PostgreSQL host, username and password from a database application Secret.",
+      "category": "configuration",
+      "group_id": "mealie-application",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "114119124ed93e726b8ede684c562a3a",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/default/mealie/app/helmrelease.yaml",
+            "start_line": 2,
+            "end_line": 167,
+            "content_hash": "52847ad42edde8afccf725569ef43105c436561e616edcb8ea431a7b1bd7e217"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-016",
+      "text": "Connect Authentik to PostgreSQL with verify-full TLS and a mounted CA certificate.",
+      "category": "conceptual",
+      "group_id": "authentik-application",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "6234882027665bbf142dc16099a519a2",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/security/authentik/app/helmrelease.yaml",
+            "start_line": 2,
+            "end_line": 177,
+            "content_hash": "de1764ed1e1a4218b525c7ce1c649267ecc331b422724a328b83d0220ad794a8"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-017",
+      "text": "Select uppercase environment variable names using ExternalSecret dataFrom find name regexp.",
+      "category": "identifier",
+      "group_id": "home-assistant-secret",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "28bbad3983e2685e80e2d77e41ef2461",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/default/home-assistant/app/externalsecret.yaml",
+            "start_line": 2,
+            "end_line": 18,
+            "content_hash": "b2e6f3384e809ced8e20b8d77f518fd4c2e9b2d590f2243c32569069eccb86f2"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-018",
+      "text": "URL-encode a Paperless Redis password inside an ExternalSecret template.",
+      "category": "configuration",
+      "group_id": "paperless-secret",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "712e893dcd4f2165802fad0ea7f1a46b",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/default/paperless/app/externalsecret.yaml",
+            "start_line": 2,
+            "end_line": 32,
+            "content_hash": "940ac1d8ca0920cf7beac1436f1b5e28734ec70d4d907ed395306d4702398f9e"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-019",
+      "text": "Disable PushSecret and ClusterPushSecret processing and CRD creation in External Secrets Helm values.",
+      "category": "configuration",
+      "group_id": "external-secrets-controller",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "42f6adc50fd7793c732d481e98754a0d",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/security/external-secrets/app/helmrelease.yaml",
+            "start_line": 2,
+            "end_line": 72,
+            "content_hash": "5940a3dc4492a2813dbeb53f912eb38fe24f0f85391e6f1087d3115c57e0cc3f"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-020",
+      "text": "Issue certificates using an ACME DNS-01 challenge through a Cloudflare API token Secret.",
+      "category": "conceptual",
+      "group_id": "acme-cloudflare",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "1c145c6f9c6907fcb7bc93e17049069d",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/security/cert-manager/issuers/letsencrypt-production.yaml",
+            "start_line": 2,
+            "end_line": 19,
+            "content_hash": "734121b4104e40aa2663cacd9732653939f4aa94698fc4eccd0c5361709fc74c"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-021",
+      "text": "Terminate HTTPS on a Gateway API listener with a wildcard certificate Secret.",
+      "category": "configuration",
+      "group_id": "envoy-gateway-listeners",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": "Gateway",
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "93c0dd1f7ea9f450e145a8efa38d0c0b",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/network/envoy-gateway/config/gateway-external.yaml",
+            "start_line": 2,
+            "end_line": 30,
+            "content_hash": "1fcac945ff91975db9f91e4a86e98ce4f2bd80be2c5ac42849de36bf6dc5f902"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-022",
+      "text": "Set an external Gateway address using lbipam.cilium.io/ips.",
+      "category": "identifier",
+      "group_id": "envoy-gateway-listeners",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "93c0dd1f7ea9f450e145a8efa38d0c0b",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/network/envoy-gateway/config/gateway-external.yaml",
+            "start_line": 2,
+            "end_line": 30,
+            "content_hash": "1fcac945ff91975db9f91e4a86e98ce4f2bd80be2c5ac42849de36bf6dc5f902"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-023",
+      "text": "Redirect HTTP requests to HTTPS with a Gateway API HTTPRoute and status 301.",
+      "category": "conceptual",
+      "group_id": "gateway-http-redirect",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": "HTTPRoute",
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "e0b68cf7f2f248af60395b9b6d85a370",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/network/envoy-gateway/config/httproute.yaml",
+            "start_line": 2,
+            "end_line": 22,
+            "content_hash": "cb7baf5bc3cfb99be8850699dca46d6b2e97593dae9ac340bb331f604dce35a9"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-024",
+      "text": "Find a CiliumL2AnnouncementPolicy with loadBalancerIPs and interface selection.",
+      "category": "identifier",
+      "group_id": "cilium-l2",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": "CiliumL2AnnouncementPolicy",
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "829af44be84dc7d1ab167f885e79b2ea",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/kube-system/cilium/config/l2-announcement-policy.yaml",
+            "start_line": 3,
+            "end_line": 13,
+            "content_hash": "9a31a5e7c92d584b7470c830e95284821049245ecf74cb0a54d656bfa7cef336"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-025",
+      "text": "Reserve a start and stop address range in a CiliumLoadBalancerIPPool.",
+      "category": "configuration",
+      "group_id": "cilium-address-pool",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": "CiliumLoadBalancerIPPool",
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "5ce557aae39b16bccae432d2486cd6f3",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/kube-system/cilium/config/loadbalancer-ip-pool.yaml",
+            "start_line": 3,
+            "end_line": 10,
+            "content_hash": "1453a38c05e599b93655e6d7cbb510401ff9d62b0113c6d35d1e78cf8316b721"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-026",
+      "text": "Advertise Kubernetes service addresses to network routers using Cilium BGP.",
+      "category": "conceptual",
+      "group_id": "cilium-bgp",
+      "filters": {
+        "repo_ids": [
+          "ceee7a1449efb51f9b6d5dcdf43303da"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "eaac0c3cf97e60aa19cdafe0514ca6f9",
+          "grade": 3,
+          "source": {
+            "repo_id": "ceee7a1449efb51f9b6d5dcdf43303da",
+            "commit": "cd3786d20782b35311106fdaefcdf1205d199772",
+            "path": "kubernetes/apps/kube-system/cilium/app/networking.yaml",
+            "start_line": 13,
+            "end_line": 27,
+            "content_hash": "6d6832b87be6e0441eb745343aecf50954f7ea81d67e34d1c5edf6054c1ebfe4"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-027",
+      "text": "Set holdTimeSeconds and keepAliveTimeSeconds in CiliumBGPPeerConfig.",
+      "category": "identifier",
+      "group_id": "cilium-bgp",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": "CiliumBGPPeerConfig",
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "ee26b5e1c50544b9ff5df7c70c75440f",
+          "grade": 3,
+          "source": {
+            "repo_id": "ceee7a1449efb51f9b6d5dcdf43303da",
+            "commit": "cd3786d20782b35311106fdaefcdf1205d199772",
+            "path": "kubernetes/apps/kube-system/cilium/app/networking.yaml",
+            "start_line": 30,
+            "end_line": 43,
+            "content_hash": "ca868373ee08ed60af4d1f4e778b19c0a2cca72306fee535858e3324be8cfd21"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-028",
+      "text": "Run two Envoy gateway replicas with topology spread constraints and non-root pod security.",
+      "category": "configuration",
+      "group_id": "envoy-proxy",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "9f111b142a0272fec12eaa512c9538ae",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/network/envoy-gateway/config/envoyproxy.yaml",
+            "start_line": 2,
+            "end_line": 51,
+            "content_hash": "65460f4d85800ac3918a54efa54f3dabdbce65bace8e841300475a27b3e29d20"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-029",
+      "text": "Restrict external gateway ingress to cloudflared pods and monitoring namespaces.",
+      "category": "conceptual",
+      "group_id": "gateway-network-policy",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "2c66562d91c34ed8f116bd2c8c768a41",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/network/envoy-gateway/config/networkpolicy.yaml",
+            "start_line": 2,
+            "end_line": 32,
+            "content_hash": "225fac3d86b17df8470e376befd4572740fcc4097a2be9d5c3b751f69d0644f4"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-030",
+      "text": "Scrape /stats/prometheus on Envoy gateway pods with a PodMonitor.",
+      "category": "identifier",
+      "group_id": "envoy-proxy-monitoring",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": "PodMonitor",
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "88b2fa8979cabba8b54dc3c0be78d290",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/network/envoy-gateway/config/podmonitor.yaml",
+            "start_line": 2,
+            "end_line": 12,
+            "content_hash": "3a5c6d98289258766d7fab273f86503a5255f49a72ab59ec2fe1f6294d03889a"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-031",
+      "text": "Connect a GatewayClass to its EnvoyProxy using parametersRef.",
+      "category": "configuration",
+      "group_id": "gateway-class",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": "GatewayClass",
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "dfdc798bb240d2ba851832fc4a92367d",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/network/envoy-gateway/config/gatewayclass.yaml",
+            "start_line": 2,
+            "end_line": 12,
+            "content_hash": "a2574ee7d4fc4c9a75cf9db8d68c89bf9e847e61b59816dec31ca73a51284234"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-032",
+      "text": "Define a Longhorn StorageClass with two replicas and volume expansion.",
+      "category": "configuration",
+      "group_id": "longhorn-storage-class",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": "StorageClass",
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "54bb4dadcce347eafcf6afe52b6b9d6a",
+          "grade": 3,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/storage/longhorn/config/storageclass.yaml",
+            "start_line": 2,
+            "end_line": 15,
+            "content_hash": "f13953cfbf82b6d8c0c185c99be0d391f4d23b55816999f500a2a846656c1722"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-033",
+      "text": "Find Cilium loadBalancer mode dsr and algorithm maglev settings.",
+      "category": "identifier",
+      "group_id": "cilium-values",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "567b37af106f093a1a163001f9ee9714",
+          "grade": 3,
+          "source": {
+            "repo_id": "ceee7a1449efb51f9b6d5dcdf43303da",
+            "commit": "cd3786d20782b35311106fdaefcdf1205d199772",
+            "path": "kubernetes/apps/kube-system/cilium/app/helmrelease.yaml",
+            "start_line": 3,
+            "end_line": 94,
+            "content_hash": "46475815eaec12eaaf339ec25e98c05c24c1e7bf5f2c33f28e94cb77d321ce1d"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-034",
+      "text": "Replace kube-proxy and enable native routing in Cilium Helm values.",
+      "category": "conceptual",
+      "group_id": "cilium-values",
+      "filters": {
+        "repo_ids": [
+          "ceee7a1449efb51f9b6d5dcdf43303da"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "567b37af106f093a1a163001f9ee9714",
+          "grade": 3,
+          "source": {
+            "repo_id": "ceee7a1449efb51f9b6d5dcdf43303da",
+            "commit": "cd3786d20782b35311106fdaefcdf1205d199772",
+            "path": "kubernetes/apps/kube-system/cilium/app/helmrelease.yaml",
+            "start_line": 3,
+            "end_line": 94,
+            "content_hash": "46475815eaec12eaaf339ec25e98c05c24c1e7bf5f2c33f28e94cb77d321ce1d"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-035",
+      "text": "Attach Home Assistant to an IoT network with a Multus network annotation.",
+      "category": "conceptual",
+      "group_id": "home-assistant-application",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "cf8bd65a5cb18c0e7c901ff983a9164a",
+          "grade": 3,
+          "source": {
+            "repo_id": "ceee7a1449efb51f9b6d5dcdf43303da",
+            "commit": "cd3786d20782b35311106fdaefcdf1205d199772",
+            "path": "kubernetes/apps/default/home-assistant/app/helmrelease.yaml",
+            "start_line": 3,
+            "end_line": 100,
+            "content_hash": "0e0ac02bc9d715b481719688c099a52c22cc3a9ab3f3ee3200496b558b85ba6e"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-036",
+      "text": "Configure a Home Assistant readiness probe on /healthz port 8123.",
+      "category": "identifier",
+      "group_id": "home-assistant-application",
+      "filters": {
+        "repo_ids": [
+          "ceee7a1449efb51f9b6d5dcdf43303da"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "cf8bd65a5cb18c0e7c901ff983a9164a",
+          "grade": 3,
+          "source": {
+            "repo_id": "ceee7a1449efb51f9b6d5dcdf43303da",
+            "commit": "cd3786d20782b35311106fdaefcdf1205d199772",
+            "path": "kubernetes/apps/default/home-assistant/app/helmrelease.yaml",
+            "start_line": 3,
+            "end_line": 100,
+            "content_hash": "0e0ac02bc9d715b481719688c099a52c22cc3a9ab3f3ee3200496b558b85ba6e"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-037",
+      "text": "Set X-Plex-Http-Pipeline to infinite through a RequestHeaderModifier route filter.",
+      "category": "identifier",
+      "group_id": "plex-application",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "6282568267ac726971d7863bbad25bd3",
+          "grade": 3,
+          "source": {
+            "repo_id": "ceee7a1449efb51f9b6d5dcdf43303da",
+            "commit": "cd3786d20782b35311106fdaefcdf1205d199772",
+            "path": "kubernetes/apps/default/plex/app/helmrelease.yaml",
+            "start_line": 3,
+            "end_line": 136,
+            "content_hash": "0af96a4912761baaf9f682b03409d08c45dd59f8ed6a78150197f452428d1f91"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-038",
+      "text": "Allocate a GPU to Plex using resourceClaims and resourceClaimTemplateName.",
+      "category": "configuration",
+      "group_id": "plex-application",
+      "filters": {
+        "repo_ids": [
+          "ceee7a1449efb51f9b6d5dcdf43303da"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "6282568267ac726971d7863bbad25bd3",
+          "grade": 3,
+          "source": {
+            "repo_id": "ceee7a1449efb51f9b6d5dcdf43303da",
+            "commit": "cd3786d20782b35311106fdaefcdf1205d199772",
+            "path": "kubernetes/apps/default/plex/app/helmrelease.yaml",
+            "start_line": 3,
+            "end_line": 136,
+            "content_hash": "0af96a4912761baaf9f682b03409d08c45dd59f8ed6a78150197f452428d1f91"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-039",
+      "text": "Connect a Home Assistant MCP server to the internal Home Assistant service with HOMEASSISTANT_URL.",
+      "category": "conceptual",
+      "group_id": "home-assistant-mcp",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "713f97d7537e1015af683649fac88f58",
+          "grade": 3,
+          "source": {
+            "repo_id": "ceee7a1449efb51f9b6d5dcdf43303da",
+            "commit": "cd3786d20782b35311106fdaefcdf1205d199772",
+            "path": "kubernetes/apps/default/home-assistant/mcp/helmrelease.yaml",
+            "start_line": 3,
+            "end_line": 94,
+            "content_hash": "b58ad111ae237c3c1fc06e4699f19a94bc1012199739072ee9914abe0922c0c1"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-040",
+      "text": "Allocate a GPU to Jellyfin using a resource claim template and container resource claims.",
+      "category": "configuration",
+      "group_id": "jellyfin-application",
+      "filters": {
+        "repo_ids": [
+          "f2ff291633edb4337e26980504c7e83b"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "7c40549837681fc16999cb32bd6bd5f9",
+          "grade": 3,
+          "source": {
+            "repo_id": "f2ff291633edb4337e26980504c7e83b",
+            "commit": "61409ad33e656336fb7efaf32b78babbf5837c4a",
+            "path": "kubernetes/apps/media/jellyfin/app/helmrelease.yaml",
+            "start_line": 3,
+            "end_line": 160,
+            "content_hash": "467501893bce16c0f6189cb01f54773e1ed95ee873b99a0ee5d5390c904087ec"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-041",
+      "text": "Run Jellyfin with a read-only root filesystem and dropped Linux capabilities.",
+      "category": "configuration",
+      "group_id": "jellyfin-application",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "7c40549837681fc16999cb32bd6bd5f9",
+          "grade": 3,
+          "source": {
+            "repo_id": "f2ff291633edb4337e26980504c7e83b",
+            "commit": "61409ad33e656336fb7efaf32b78babbf5837c4a",
+            "path": "kubernetes/apps/media/jellyfin/app/helmrelease.yaml",
+            "start_line": 3,
+            "end_line": 160,
+            "content_hash": "467501893bce16c0f6189cb01f54773e1ed95ee873b99a0ee5d5390c904087ec"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-042",
+      "text": "Configure PAPERLESS_REDIS with the paperless-dragonfly service.",
+      "category": "identifier",
+      "group_id": "paperless-application",
+      "filters": {
+        "repo_ids": [
+          "f2ff291633edb4337e26980504c7e83b"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "f4cf7bcaaf8a5a44497d467d34571643",
+          "grade": 3,
+          "source": {
+            "repo_id": "f2ff291633edb4337e26980504c7e83b",
+            "commit": "61409ad33e656336fb7efaf32b78babbf5837c4a",
+            "path": "kubernetes/apps/selfhosted/paperless/app/helmrelease.yaml",
+            "start_line": 3,
+            "end_line": 150,
+            "content_hash": "a105d9c806c1b87147485b4e60c0f12db7c1027a13431025ed2c1e977da33c2c"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-043",
+      "text": "Configure Paperless OCR language and installed OCR languages for Dutch.",
+      "category": "configuration",
+      "group_id": "paperless-application",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "f4cf7bcaaf8a5a44497d467d34571643",
+          "grade": 3,
+          "source": {
+            "repo_id": "f2ff291633edb4337e26980504c7e83b",
+            "commit": "61409ad33e656336fb7efaf32b78babbf5837c4a",
+            "path": "kubernetes/apps/selfhosted/paperless/app/helmrelease.yaml",
+            "start_line": 3,
+            "end_line": 150,
+            "content_hash": "a105d9c806c1b87147485b4e60c0f12db7c1027a13431025ed2c1e977da33c2c"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-044",
+      "text": "Permit Paperless egress to a Dragonfly Redis broker through a Cilium network policy.",
+      "category": "conceptual",
+      "group_id": "paperless-application",
+      "filters": {
+        "repo_ids": [
+          "f2ff291633edb4337e26980504c7e83b"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "f4cf7bcaaf8a5a44497d467d34571643",
+          "grade": 3,
+          "source": {
+            "repo_id": "f2ff291633edb4337e26980504c7e83b",
+            "commit": "61409ad33e656336fb7efaf32b78babbf5837c4a",
+            "path": "kubernetes/apps/selfhosted/paperless/app/helmrelease.yaml",
+            "start_line": 3,
+            "end_line": 150,
+            "content_hash": "a105d9c806c1b87147485b4e60c0f12db7c1027a13431025ed2c1e977da33c2c"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-045",
+      "text": "Configure Zstd, Brotli and Gzip compression in an Envoy BackendTrafficPolicy.",
+      "category": "configuration",
+      "group_id": "envoy-compression",
+      "filters": {
+        "repo_ids": null,
+        "app": null,
+        "service": null,
+        "kind": "BackendTrafficPolicy",
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "2f49754c09397f9abc3c33081a5481f5",
+          "grade": 3,
+          "source": {
+            "repo_id": "ceee7a1449efb51f9b6d5dcdf43303da",
+            "commit": "cd3786d20782b35311106fdaefcdf1205d199772",
+            "path": "kubernetes/apps/network/envoy-gateway/app/envoy.yaml",
+            "start_line": 120,
+            "end_line": 148,
+            "content_hash": "e622916eb987bfba73035fcce6ff186889682db9ee46a15f5e24a2763289855f"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex against retained pilot source. Sparse positive judgment; equivalent unjudged configurations may exist. Human pooling and review required before holdout use."
+    },
+    {
+      "id": "pilot-046",
+      "text": "Does the CloudNativePG Cluster object establish that its PostgreSQL data is backed up by VolSync restic?",
+      "category": "negative",
+      "group_id": "cnpg-volsync-negative",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": "Cluster",
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "9a6455bff911413b3b5554511ad7a86f",
+          "grade": 0,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/components/postgres/cluster.yaml",
+            "start_line": 2,
+            "end_line": 56,
+            "content_hash": "902793a6c1c41aed638cdfc78b31249a067a9fce42d26dd95b72a4f1e61267e3"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex for calibration; this passage does not establish the requested integration. No positive judgment is supplied; this is not a claim of corpus-wide absence."
+    },
+    {
+      "id": "pilot-047",
+      "text": "Does declaring a CloudNativePG controller HelmRelease establish a Paperless database connection?",
+      "category": "negative",
+      "group_id": "cnpg-paperless-negative",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "aa760f2fc7d579825e689341bcb78388",
+          "grade": 0,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/database/cloudnative-pg/app/helmrelease.yaml",
+            "start_line": 2,
+            "end_line": 54,
+            "content_hash": "1d013f11696b3e4ff8b23990ed3acdd6db5ddd41c387369c351a12cf18e3a921"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex for calibration; this passage does not establish the requested integration. No positive judgment is supplied; this is not a claim of corpus-wide absence."
+    },
+    {
+      "id": "pilot-048",
+      "text": "Does a GatewayClass parametersRef establish the application database backup configuration?",
+      "category": "negative",
+      "group_id": "gateway-database-negative",
+      "filters": {
+        "repo_ids": [
+          "56ef1eeccff12b265e12db3ad70c0f25"
+        ],
+        "app": null,
+        "service": null,
+        "kind": "GatewayClass",
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "dfdc798bb240d2ba851832fc4a92367d",
+          "grade": 0,
+          "source": {
+            "repo_id": "56ef1eeccff12b265e12db3ad70c0f25",
+            "commit": "97aa3f0244c0052d8518a5edba293109a11f1154",
+            "path": "kubernetes/apollo/apps/network/envoy-gateway/config/gatewayclass.yaml",
+            "start_line": 2,
+            "end_line": 12,
+            "content_hash": "a2574ee7d4fc4c9a75cf9db8d68c89bf9e847e61b59816dec31ca73a51284234"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex for calibration; this passage does not establish the requested integration. No positive judgment is supplied; this is not a claim of corpus-wide absence."
+    },
+    {
+      "id": "pilot-049",
+      "text": "Does this Cilium HelmRelease establish VolSync restic backup retention for persistent volumes?",
+      "category": "negative",
+      "group_id": "cilium-restic-negative",
+      "filters": {
+        "repo_ids": [
+          "ceee7a1449efb51f9b6d5dcdf43303da"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "567b37af106f093a1a163001f9ee9714",
+          "grade": 0,
+          "source": {
+            "repo_id": "ceee7a1449efb51f9b6d5dcdf43303da",
+            "commit": "cd3786d20782b35311106fdaefcdf1205d199772",
+            "path": "kubernetes/apps/kube-system/cilium/app/helmrelease.yaml",
+            "start_line": 3,
+            "end_line": 94,
+            "content_hash": "46475815eaec12eaaf339ec25e98c05c24c1e7bf5f2c33f28e94cb77d321ce1d"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex for calibration; this passage does not establish the requested integration. No positive judgment is supplied; this is not a claim of corpus-wide absence."
+    },
+    {
+      "id": "pilot-050",
+      "text": "Does a Paperless Redis service URL establish a CNPG Barman object-storage destination?",
+      "category": "negative",
+      "group_id": "paperless-backup-negative",
+      "filters": {
+        "repo_ids": [
+          "f2ff291633edb4337e26980504c7e83b"
+        ],
+        "app": null,
+        "service": null,
+        "kind": null,
+        "namespace": null,
+        "context": null
+      },
+      "relevance": [
+        {
+          "chunk_id": "f4cf7bcaaf8a5a44497d467d34571643",
+          "grade": 0,
+          "source": {
+            "repo_id": "f2ff291633edb4337e26980504c7e83b",
+            "commit": "61409ad33e656336fb7efaf32b78babbf5837c4a",
+            "path": "kubernetes/apps/selfhosted/paperless/app/helmrelease.yaml",
+            "start_line": 3,
+            "end_line": 150,
+            "content_hash": "a105d9c806c1b87147485b4e60c0f12db7c1027a13431025ed2c1e977da33c2c"
+          }
+        }
+      ],
+      "notes": "Inspected by Codex for calibration; this passage does not establish the requested integration. No positive judgment is supplied; this is not a claim of corpus-wide absence."
+    }
+  ]
+}

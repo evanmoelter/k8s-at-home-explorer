@@ -206,6 +206,10 @@ def test_pgvector_sql_cosine_provider_filters_and_readiness(store):
     assert result["items"][0]["cosine_similarity"] == pytest.approx(1)
     assert result["items"][1]["cosine_similarity"] == pytest.approx(0)
     assert store._semantic([1, 0], provider, repo_ids=["absent"])["items"] == []
+    scoped = store._semantic([1, 0], provider, chunk_ids=[extracted.chunks[1].id])
+    assert [row["id"] for row in scoped["items"]] == [extracted.chunks[1].id]
+    assert scoped["items"][0]["cosine_similarity"] == pytest.approx(0)
+    assert store._semantic([1, 0], provider, chunk_ids=[])["items"] == []
     missing_provider = SimpleNamespace(cache_key="absent-provider", model="absent", dimensions=2)
     assert store._semantic([1, 0], missing_provider)["items"] == []
     similar = store.similar_chunks(extracted.chunks[0].id, provider, snapshot_id=snap.id)
@@ -244,6 +248,42 @@ def test_embedding_index_does_not_publish_stale_readiness(store, monkeypatch):
         query("SELECT semantic_providers FROM snapshots WHERE id=%s", (snap.id,))[0]["semantic_providers"]
         == []
     )
+
+
+@pytest.mark.integration
+def test_store_calls_explicit_document_and_query_roles_without_legacy_fallback(store):
+    """Fail-before-vector adapters prove role routing without fabricating embeddings."""
+    from types import SimpleNamespace
+
+    _, snap, _, _ = publish(store)
+
+    def legacy(*arguments):
+        pytest.fail("Legacy embed method must not choose retrieval roles")
+
+    def documents(texts):
+        assert isinstance(texts, list) and texts
+        raise ValueError("document-role-observed")
+
+    def query(text):
+        assert text == "backup scheduling"
+        raise ValueError("query-role-observed")
+
+    provider = SimpleNamespace(
+        cache_key="role-routing",
+        model="role-routing",
+        dimensions=2,
+        embed=legacy,
+        embed_documents=documents,
+        embed_query=query,
+    )
+    with pytest.raises(ValueError, match="document-role-observed"):
+        store.index_embeddings(snap.id, provider)
+    with store._connect() as connection:
+        connection.execute(
+            "UPDATE snapshots SET semantic_providers=ARRAY[%s] WHERE id=%s", (provider.cache_key, snap.id)
+        )
+    with pytest.raises(ValueError, match="query-role-observed"):
+        store.semantic_search("backup scheduling", provider)
 
 
 @pytest.mark.integration

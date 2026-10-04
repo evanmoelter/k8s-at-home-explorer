@@ -10,6 +10,10 @@ import yaml
 
 from .models import Chunk, Edge, Extraction, Resource, Snapshot, SourceFile, stable_id
 
+# A provider-neutral byte bound also bounds byte-level tokenizer inputs. Preserve
+# complete resources where possible; never silently truncate a long source line.
+MAX_CHUNK_BYTES = 8_000
+
 ALIASES = {
     "cnpg": "cloudnative-pg",
     "cloudnative-pg": "cloudnative-pg",
@@ -267,7 +271,10 @@ def extract(snapshot: Snapshot, files: list[tuple[SourceFile, str]]) -> Extracti
                         {"file_id": source.id, "path": source.path, "reason": "invalid_resource"}
                     )
                     continue
-                start, end = node.start_mark.line + 1, node.end_mark.line
+                start = node.start_mark.line + 1
+                # A mark inside the final line includes it; a column-zero mark
+                # points after the last content line (usually its trailing LF).
+                end = min(len(lines), node.end_mark.line + int(node.end_mark.column > 0))
                 resource = Resource(
                     id=stable_id(source.id, "resource", str(index)),
                     repo_id=snapshot.repo_id,
@@ -288,30 +295,13 @@ def extract(snapshot: Snapshot, files: list[tuple[SourceFile, str]]) -> Extracti
                 )
                 result.resources.append(resource)
                 content = "\n".join(lines[start - 1 : end])
-                if len(content.encode()) <= 32_000:
+                if len(content.encode()) <= MAX_CHUNK_BYTES:
                     result.chunks.append(_chunk(source, content, start, max(start, end), resource.id))
                 else:
-                    for offset in range(start - 1, end, 40):
-                        piece = "\n".join(lines[offset : min(offset + 40, end)])
-                        if len(piece.encode()) <= 32_000:
-                            result.chunks.append(
-                                _chunk(source, piece, offset + 1, min(offset + 40, end), resource.id)
-                            )
-                        else:
-                            result.skipped.append(
-                                {
-                                    "file_id": source.id,
-                                    "path": source.path,
-                                    "reason": "semantic_chunk_too_large",
-                                    "start_line": offset + 1,
-                                }
-                            )
+                    _line_chunks(result, source, lines, start - 1, end, 40, resource.id)
         # Text/config chunks also cover Helm values without kind/metadata.
         if not any(r.file_id == source.id for r in result.resources):
-            for offset in range(0, len(lines), 80):
-                content = "\n".join(lines[offset : offset + 80])
-                if content.strip() and len(content.encode()) <= 32_000:
-                    result.chunks.append(_chunk(source, content, offset + 1, min(offset + 80, len(lines))))
+            _line_chunks(result, source, lines, 0, len(lines), 80)
     lookup = defaultdict(list)
     by_path = defaultdict(list)
     for resource in result.resources:
@@ -395,6 +385,34 @@ def extract(snapshot: Snapshot, files: list[tuple[SourceFile, str]]) -> Extracti
                         )
                     )
     return result
+
+
+def _line_chunks(result, source, lines, start, end, max_lines, resource_id=None):
+    offset = start
+    while offset < end:
+        limit = offset
+        size = 0
+        while limit < min(offset + max_lines, end):
+            additional = len(lines[limit].encode()) + (1 if limit > offset else 0)
+            if size + additional > MAX_CHUNK_BYTES:
+                break
+            size += additional
+            limit += 1
+        if limit == offset:
+            result.skipped.append(
+                {
+                    "file_id": source.id,
+                    "path": source.path,
+                    "reason": "semantic_chunk_too_large",
+                    "start_line": offset + 1,
+                }
+            )
+            offset += 1
+            continue
+        content = "\n".join(lines[offset:limit])
+        if content.strip():
+            result.chunks.append(_chunk(source, content, offset + 1, limit, resource_id))
+        offset = limit
 
 
 def _chunk(source, content, start, end, resource_id=None):

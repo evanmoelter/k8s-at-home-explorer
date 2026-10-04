@@ -33,6 +33,30 @@ file = "scripts/local-integration.sh"
 description = "Serve MCP using EXPLORER_DATABASE_URL and configured corpus"
 run = "uv run k8s-explorer serve"
 
+[tasks."eval:export"]
+description = "Export latest source-verified scans for retrieval evaluation"
+run = "uv run k8s-explorer eval export"
+
+[tasks."eval:validate"]
+description = "Validate frozen corpus, source judgments, and provider configuration"
+run = "uv run k8s-explorer eval validate"
+
+[tasks."eval:lexical"]
+description = "Run lexical calibration without provider calls or a database"
+run = "uv run k8s-explorer eval run --mode lexical"
+
+[tasks."eval:rebind"]
+description = "Rebind calibration judgments only when inspected source content is unchanged"
+run = "uv run k8s-explorer eval rebind"
+
+[tasks."eval:benchmark"]
+description = "Evaluate explicitly selected providers on an isolated disposable pgvector database"
+file = "scripts/eval-benchmark.sh"
+
+[tasks."eval:token-check"]
+description = "Check all prepared inputs against a selected TEI endpoint's actual tokenizer and limits"
+run = "uv run python scripts/check-embedding-inputs.py"
+
 [tasks."image:build"]
 description = "Build the non-root API and worker image"
 run = "docker build -t k8s-explorer:local ."
@@ -72,8 +96,8 @@ file = "scripts/local-seed.sh"
 [tasks.lint]
 description = "Lint Python and validate the CI workflow and mise tasks"
 run = [
-  "uv run ruff check src tests scripts/check-deploy.py",
-  "uv run ruff format --check src tests scripts/check-deploy.py",
-  "actionlint .github/workflows/agent-explorer.yaml",
+  "uv run ruff check src tests scripts/check-deploy.py scripts/check-embedding-inputs.py",
+  "uv run ruff format --check src tests scripts/check-deploy.py scripts/check-embedding-inputs.py",
+  "actionlint .github/workflows/*.yaml",
   "mise tasks validate",
 ]

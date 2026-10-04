@@ -1,0 +1,9 @@
+# Dense embeddings only. Weight identity matches config/evaluation/providers.yaml.
+controllers:
+  tei:
+    containers:
+      tei:
+        env:
+          MODEL_ID: BAAI/bge-m3
+          REVISION: 5617a9f61b028005a4858fdac845db406aefb181
+          POOLING: cls

@@ -57,12 +57,26 @@ without HTTP. Configure bearer authentication with `EXPLORER_API_TOKEN` when
 exposing HTTP beyond localhost.
 
 Semantic retrieval requires a real configured embedding provider. Set
-`EXPLORER_EMBEDDING_URL` to its OpenAI-compatible embeddings endpoint,
+`EXPLORER_EMBEDDING_URL` to its complete embeddings endpoint,
 `EXPLORER_EMBEDDING_MODEL`, and `EXPLORER_EMBEDDING_DIMENSIONS`; supply
 `EXPLORER_EMBEDDING_API_KEY` through the environment if needed. Configure the
 provider before syncing. Without it, the other retrieval families still work
 and semantic tools report their unavailable state. Synthetic embeddings are
 not a substitute for an embedding model.
+
+`EXPLORER_EMBEDDING_PROTOCOL` selects `openai` (default), `voyage`, or native
+`tei`. Documents and queries use separate request/preprocessing paths. Set
+`EXPLORER_EMBEDDING_REQUESTED_DIMENSIONS` only when requesting an explicit output
+size; it must match the expected dimensions above. Revision, query instruction,
+document/query prefixes, and TEI-native prompt names have corresponding
+`EXPLORER_EMBEDDING_*` settings. Use either a client prefix/instruction or a native
+prompt for each role. Cache identity includes those settings and excludes keys;
+model revision is a declaration and must match the deployed server separately.
+`EXPLORER_EMBEDDING_REQUEST_TIMEOUT_SECONDS` defaults to 60; CPU evaluation
+examples use 300 to accommodate longer batches. It bounds HTTP inactivity rather
+than total run time and does not change vector cache identity.
+See [embedding evaluation](embedding-evaluation.md) for provider examples,
+calibration questions, disposable benchmarking, and interpretation limits.
 
 `EXPLORER_GITHUB_TOKEN` optionally authenticates repository discovery and metadata
 refresh. Keep tokens in the environment or Kubernetes Secrets. Production fetches
@@ -107,11 +121,12 @@ To validate a real model after choosing one, set `EXPLORER_TEST_EMBEDDING_URL`,
 ordinary integration suite validates pgvector using explicit numeric fixtures;
 the real-model test remains skipped until configured.
 
-`mise run check` also validates the agent-explorer workflow with mise-pinned
-actionlint, including the gated multi-platform GHCR publish job.
+`mise run check` also validates all three workflows with mise-pinned actionlint
+and ShellCheck, including the gated multi-platform GHCR publish job.
 
-`mise run deploy:check` renders the local manifests and reusable Helm/Flux packaging
-and checks deployment safety invariants. `mise run deploy:schemas` additionally
+`mise run deploy:check` renders the local manifests, reusable Helm/Flux packaging,
+and both CPU embedding serving examples, then checks deployment safety invariants.
+`mise run deploy:schemas` additionally
 validates the local and rendered Helm resources against upstream schemas. Helm and
 Kustomize versions are pinned in mise. The app-template values at
 `deploy/helm/app-template/values.yaml` accept installation overlays; the optional

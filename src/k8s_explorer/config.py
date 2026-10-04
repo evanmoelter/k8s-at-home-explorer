@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Literal
 
 from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -26,6 +27,15 @@ class Settings(BaseSettings):
     embedding_model: str | None = None
     embedding_dimensions: int | None = Field(default=None, ge=1, le=16000)
     embedding_api_key: SecretStr | None = None
+    embedding_protocol: Literal["openai", "voyage", "tei"] = "openai"
+    embedding_requested_dimensions: int | None = Field(default=None, ge=1, le=16000)
+    embedding_model_revision: str | None = Field(default=None, max_length=500)
+    embedding_query_instruction: str | None = Field(default=None, max_length=8192)
+    embedding_document_prefix: str = Field(default="", max_length=8192)
+    embedding_query_prefix: str = Field(default="", max_length=8192)
+    embedding_query_prompt_name: str | None = Field(default=None, max_length=500)
+    embedding_document_prompt_name: str | None = Field(default=None, max_length=500)
+    embedding_request_timeout_seconds: float = Field(default=60, ge=1, le=1800, allow_inf_nan=False)
     api_token: SecretStr | None = None
     allowed_http_hosts: list[str] = ["localhost", "127.0.0.1", "testserver", "k8s-explorer"]
     host: str = "127.0.0.1"
@@ -36,4 +46,9 @@ class Settings(BaseSettings):
         configured = (self.embedding_url, self.embedding_model, self.embedding_dimensions)
         if any(value is not None for value in configured) and not all(configured):
             raise ValueError("Embedding URL, model, and dimensions must be configured together")
+        if (
+            self.embedding_requested_dimensions is not None
+            and self.embedding_requested_dimensions != self.embedding_dimensions
+        ):
+            raise ValueError("Requested embedding dimensions must match validated output dimensions")
         return self

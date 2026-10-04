@@ -28,6 +28,7 @@ The MCP endpoint is `http://localhost:8000/mcp`. The dedicated kind cluster star
 - [Architecture](docs/designs/20261004-agent-explorer.md)
 - [Decision log and decision owners](docs/decisions.md)
 - [Pilot evidence and limitations](docs/evaluation.md)
+- [Embedding provider evaluation](docs/embedding-evaluation.md)
 
 Source tools accept a repository ID and an optional expected snapshot ID to reject stale reads during refresh. Historical browsing belongs in upstream Git; this service searches only the latest completed scan.
 

@@ -85,6 +85,57 @@ def test_invalid_yaml_and_plain_config():
     assert parse("hello backup", path="README.md").chunks[0].start_line == 1
 
 
+def test_yaml_source_includes_last_line_with_and_without_final_newline():
+    for text in (
+        "kind: ConfigMap\nmetadata: {name: demo}\ndata:\n  meaningful: final-value",
+        "{kind: ConfigMap, metadata: {name: demo}, data: {meaningful: final-value}}",
+    ):
+        for suffix in ("", "\n"):
+            result = parse(text + suffix)
+            assert result.chunks[0].content == text
+            assert result.chunks[0].end_line == len(text.splitlines())
+            assert result.resources[0].end_line == len(text.splitlines())
+
+
+def test_large_resources_preserve_source_ranges_with_a_provider_neutral_byte_bound():
+    from k8s_explorer.extract import MAX_CHUNK_BYTES
+
+    text = "kind: ConfigMap\nmetadata: {name: large}\ndata:\n" + "".join(
+        f"  field{index}: '{'😀' * 80}'\n" for index in range(100)
+    )
+    result = parse(text)
+    assert len(result.resources) == 1
+    assert len(result.chunks) > 1
+    lines = text.splitlines()
+    covered = []
+    for chunk in result.chunks:
+        assert len(chunk.content.encode()) <= MAX_CHUNK_BYTES
+        assert chunk.resource_id == result.resources[0].id
+        assert chunk.content == "\n".join(lines[chunk.start_line - 1 : chunk.end_line])
+        covered.extend(range(chunk.start_line, chunk.end_line + 1))
+    assert covered == list(range(1, len(lines) + 1))
+    assert not result.skipped
+
+
+def test_oversized_single_line_is_reported_without_discarding_adjacent_source():
+    from k8s_explorer.extract import MAX_CHUNK_BYTES
+
+    text = "before\n" + "x" * (MAX_CHUNK_BYTES + 1) + "\nafter\n"
+    result = parse(text, path="README.md")
+    assert [(chunk.content, chunk.start_line, chunk.end_line) for chunk in result.chunks] == [
+        ("before", 1, 1),
+        ("after", 3, 3),
+    ]
+    assert result.skipped == [
+        {
+            "file_id": result.chunks[0].file_id,
+            "path": "README.md",
+            "reason": "semantic_chunk_too_large",
+            "start_line": 2,
+        }
+    ]
+
+
 def test_clusters_not_cross_linked():
     snapshot = Snapshot(id="snapshot", repo_id="repo", commit="a" * 40)
     docs = []

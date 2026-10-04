@@ -1,0 +1,115 @@
+# Shared CPU evaluation settings for bjw-s-labs/app-template 5.2.1.
+# Combine with exactly one model values file. No GPU or public ingress is configured.
+controllers:
+  tei:
+    replicas: 1
+    strategy: Recreate
+    pod:
+      automountServiceAccountToken: false
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      securityContext:
+        runAsUser: 568
+        runAsGroup: 568
+        runAsNonRoot: true
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    containers:
+      tei:
+        image:
+          repository: ghcr.io/huggingface/text-embeddings-inference
+          tag: cpu-1.9.4@sha256:8419f533857b503ebf6ec292a95d4f1cf9c0464ac8b8abeef39518cf110e5726
+          pullPolicy: IfNotPresent
+        args:
+          - --json-output
+          - --disable-spans
+        env:
+          HOSTNAME: 0.0.0.0
+          PORT: "8080"
+          DTYPE: float32
+          HUGGINGFACE_HUB_CACHE: /data/hub
+          HF_HOME: /data/hf
+          HOME: /tmp
+          TMPDIR: /tmp
+          # Override the image's AVX512/thread defaults for an AVX2 Intel NUC.
+          MKL_ENABLE_INSTRUCTIONS: AVX2
+          OMP_NUM_THREADS: "2"
+          MKL_NUM_THREADS: "2"
+          RAYON_NUM_THREADS: "2"
+          TOKENIZATION_WORKERS: "2"
+          MAX_BATCH_TOKENS: "8192"
+          MAX_BATCH_REQUESTS: "1"
+          MAX_CLIENT_BATCH_SIZE: "32"
+          MAX_CONCURRENT_REQUESTS: "32"
+          PAYLOAD_LIMIT: "2000000"
+          # Required to boot Qwen with an 8192-token cap below its native context.
+          # Evaluation /embed requests explicitly send truncate:false; oversized
+          # inputs fail validation instead of being silently shortened.
+          AUTO_TRUNCATE: "true"
+        probes:
+          startup:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: 8080
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 180
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: 8080
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 6
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: 8080
+              periodSeconds: 30
+              timeoutSeconds: 10
+              failureThreshold: 10
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+        # Proposed ceilings, not measured consumption or guaranteed capacity.
+        resources:
+          requests:
+            cpu: "1"
+            memory: 3Gi
+          limits:
+            cpu: "2"
+            memory: 8Gi
+service:
+  app:
+    controller: tei
+    type: ClusterIP
+    ports:
+      http:
+        port: 8080
+persistence:
+  cache:
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    retain: true
+    globalMounts:
+      - path: /data
+  tmp:
+    type: emptyDir
+    sizeLimit: 512Mi
+    globalMounts:
+      - path: /tmp
