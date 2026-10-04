@@ -1,0 +1,11 @@
+repositories:
+  - name: evanmoelter/hcc
+    url: https://github.com/evanmoelter/hcc.git
+    branch: main
+    preference: 1
+  - name: onedr0p/home-ops
+    url: https://github.com/onedr0p/home-ops.git
+    branch: main
+  - name: bjw-s-labs/home-ops
+    url: https://github.com/bjw-s-labs/home-ops.git
+    branch: main

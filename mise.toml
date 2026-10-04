@@ -1,0 +1,78 @@
+[tools]
+python = "3.13.9"
+uv = "0.12.5"
+"aqua:kubernetes/kubernetes/kubectl" = "1.35.0"
+"aqua:kubernetes-sigs/kustomize" = "5.7.1"
+"aqua:kubernetes-sigs/kind" = "0.31.0"
+"aqua:yannh/kubeconform" = "0.7.0"
+"aqua:helm/helm" = "4.2.4"
+"aqua:rhysd/actionlint" = "1.7.12"
+
+[tasks.default]
+description = "List available tasks"
+run = "mise tasks"
+
+[tasks.setup]
+description = "Install locked Python dependencies"
+run = "uv sync --frozen"
+
+[tasks.check]
+description = "Lint Python and validate deployment manifests"
+depends = ["lint", "deploy:check"]
+
+[tasks.test]
+description = "Run offline tests"
+run = "uv run pytest -m 'not integration'"
+
+[tasks."test:integration"]
+description = "Run real PostgreSQL tests on an isolated disposable Compose database"
+file = "scripts/local-integration.sh"
+
+[tasks.dev]
+description = "Serve MCP using EXPLORER_DATABASE_URL and configured corpus"
+run = "uv run k8s-explorer serve"
+
+[tasks."image:build"]
+description = "Build the non-root API and worker image"
+run = "docker build -t k8s-explorer:local ."
+
+[tasks."deploy:check"]
+description = "Render local, Helm, and Flux examples and check packaging invariants"
+run = "uv run python scripts/check-deploy.py"
+
+[tasks."deploy:schemas"]
+description = "Validate local and reusable Helm Kubernetes schemas"
+shell = "bash -euo pipefail -c"
+run = [
+  "kustomize build deploy/local | kubeconform -kubernetes-version 1.35.0 -strict -summary",
+  "uv run python scripts/check-deploy.py --helm-only | kubeconform -kubernetes-version 1.35.0 -strict -summary",
+]
+
+[tasks."local:up"]
+description = "Create or update the dedicated kind-k8s-explorer development cluster"
+file = "scripts/local-up.sh"
+
+[tasks."local:down"]
+description = "Delete only the dedicated local kind cluster"
+file = "scripts/local-down.sh"
+
+[tasks."local:forward"]
+description = "Expose the dedicated local MCP endpoint on localhost"
+file = "scripts/local-forward.sh"
+
+[tasks."local:smoke"]
+description = "Verify real HTTP MCP, health, non-root execution and read-only filesystem in dedicated kind"
+file = "scripts/local-smoke.sh"
+
+[tasks."local:seed"]
+description = "Install selected catalogue in dedicated kind without changing tracked manifests"
+file = "scripts/local-seed.sh"
+
+[tasks.lint]
+description = "Lint Python and validate the CI workflow and mise tasks"
+run = [
+  "uv run ruff check src tests scripts/check-deploy.py",
+  "uv run ruff format --check src tests scripts/check-deploy.py",
+  "actionlint .github/workflows/agent-explorer.yaml",
+  "mise tasks validate",
+]

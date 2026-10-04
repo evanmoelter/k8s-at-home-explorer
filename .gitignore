@@ -6,6 +6,10 @@
 repos*.db*
 repos/
 .venv/
+.data/
+.pytest_cache/
+.ruff_cache/
+.coverage
 .direnv/
 **/__pycache__/
 sqljs-worker-wasm.zip
