@@ -83,5 +83,5 @@ jobs:
           IMAGE_NAME: ${{ steps.image.outputs.name }}
           IMAGE_DIGEST: ${{ steps.build.outputs.digest }}
         run: |
-          printf 'Published multi-platform service image: `%s@%s`\n' \
+          printf 'Published multi-platform service image: %s@%s\n' \
             "$IMAGE_NAME" "$IMAGE_DIGEST" >> "$GITHUB_STEP_SUMMARY"
