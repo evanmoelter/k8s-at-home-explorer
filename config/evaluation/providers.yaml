@@ -1,0 +1,39 @@
+# Endpoint URLs are examples. Pin the server image and configure its weight revision
+# to match model_revision before running. No model weights or credentials are included.
+schema_version: 1
+providers:
+  - id: qwen3-0.6b
+    protocol: tei
+    url: http://127.0.0.1:8081/embed
+    model: Qwen/Qwen3-Embedding-0.6B
+    model_revision: 97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3
+    dimensions: 1024
+    request_timeout_seconds: 300
+    query_instruction: Retrieve Kubernetes configuration or documentation that answers the query with source evidence.
+  - id: bge-m3
+    protocol: tei
+    url: http://127.0.0.1:8082/embed
+    model: BAAI/bge-m3
+    model_revision: 5617a9f61b028005a4858fdac845db406aefb181
+    dimensions: 1024
+    request_timeout_seconds: 300
+  - id: voyage-code-4
+    protocol: voyage
+    url: https://api.voyageai.com/v1/embeddings
+    model: voyage-code-4
+    dimensions: 1024
+    requested_dimensions: 1024
+    api_key_env: VOYAGE_API_KEY
+  - id: openai-small
+    protocol: openai
+    url: https://api.openai.com/v1/embeddings
+    model: text-embedding-3-small
+    dimensions: 1536
+    api_key_env: OPENAI_API_KEY
+  - id: voyage-4
+    protocol: voyage
+    url: https://api.voyageai.com/v1/embeddings
+    model: voyage-4
+    dimensions: 1024
+    requested_dimensions: 1024
+    api_key_env: VOYAGE_API_KEY

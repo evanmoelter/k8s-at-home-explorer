@@ -80,6 +80,15 @@ class Explorer:
                 model=settings.embedding_model,
                 dimensions=settings.embedding_dimensions,
                 api_key=settings.embedding_api_key.get_secret_value() if settings.embedding_api_key else None,
+                protocol=settings.embedding_protocol,
+                requested_dimensions=settings.embedding_requested_dimensions,
+                model_revision=settings.embedding_model_revision,
+                query_instruction=settings.embedding_query_instruction,
+                document_prefix=settings.embedding_document_prefix,
+                query_prefix=settings.embedding_query_prefix,
+                query_prompt_name=settings.embedding_query_prompt_name,
+                document_prompt_name=settings.embedding_document_prompt_name,
+                request_timeout_seconds=settings.embedding_request_timeout_seconds,
             )
             if settings.embedding_url
             else None
@@ -141,15 +150,7 @@ class Explorer:
             return {
                 "schema": self.store.schema(),
                 "semantic_configured": self.provider is not None,
-                "semantic_provider": (
-                    {
-                        "model": self.provider.model,
-                        "dimensions": self.provider.dimensions,
-                        "provider_id": self.provider.cache_key,
-                    }
-                    if self.provider
-                    else None
-                ),
+                "semantic_provider": (self.provider.metadata if self.provider else None),
                 "content_is_untrusted": True,
                 "max_results": 100,
                 "source_identity": ["repo_id", "snapshot_id", "file_id", "path", "start_line", "end_line"],

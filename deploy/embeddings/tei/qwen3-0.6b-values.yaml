@@ -1,0 +1,9 @@
+# Weight identity matches config/evaluation/providers.yaml.
+controllers:
+  tei:
+    containers:
+      tei:
+        env:
+          MODEL_ID: Qwen/Qwen3-Embedding-0.6B
+          REVISION: 97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3
+          POOLING: last-token

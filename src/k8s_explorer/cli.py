@@ -31,9 +31,90 @@ def main() -> None:
     )
     discover.add_argument("--topic", default="k8s-at-home")
     discover.add_argument("--max-pages", type=int, default=5)
+    evaluation = sub.add_parser("eval", help="Export and evaluate frozen retrieval corpora")
+    actions = evaluation.add_subparsers(dest="eval_action", required=True)
+    export = actions.add_parser("export", help="Read-only export of the latest source-backed corpus")
+    export.add_argument("--output", type=Path, required=True)
+    export.add_argument("--repo-id", action="append")
+    export.add_argument("--max-bytes", type=int, default=64 * 1024 * 1024)
+    validate = actions.add_parser(
+        "validate", help="Validate frozen corpus, source judgments, and provider schemas"
+    )
+    validate.add_argument("--corpus", type=Path, required=True)
+    validate.add_argument("--judgments", type=Path, required=True)
+    validate.add_argument("--providers", type=Path)
+    rebind = actions.add_parser("rebind", help="Rebind unchanged calibration evidence to a new corpus")
+    rebind.add_argument("--corpus", type=Path, required=True)
+    rebind.add_argument("--judgments", type=Path, required=True)
+    rebind.add_argument("--output", type=Path, required=True)
+    run = actions.add_parser(
+        "run", help="Run BM25, exact dense, and optional reciprocal rank fusion baselines"
+    )
+    run.add_argument("--corpus", type=Path, required=True)
+    run.add_argument("--judgments", type=Path, required=True)
+    run.add_argument("--output", type=Path, required=True)
+    run.add_argument("--mode", choices=("lexical", "dense", "hybrid"), default="lexical")
+    run.add_argument("--providers", type=Path)
+    run.add_argument("--provider", action="append")
+    run.add_argument("--confirm-disposable-database", action="store_true")
+    run.add_argument("--verify-live-corpus", action="store_true")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, stream=sys.stderr, format="%(levelname)s %(message)s")
     try:
+        if args.command == "eval":
+            import os
+
+            from k8s_explorer.evaluation import (
+                export_corpus,
+                rebind_judgments,
+                run_evaluation,
+                validate_files,
+            )
+            from k8s_explorer.store import IndexStore
+
+            if args.eval_action == "validate":
+                print(json.dumps(validate_files(args.corpus, args.judgments, args.providers)))
+            elif args.eval_action == "rebind":
+                print(json.dumps(rebind_judgments(args.corpus, args.judgments, args.output)))
+            elif args.eval_action == "run":
+                live_store = (
+                    IndexStore(Settings().database_url.get_secret_value())
+                    if args.verify_live_corpus
+                    else None
+                )
+                report = run_evaluation(
+                    args.corpus,
+                    args.judgments,
+                    args.output,
+                    mode=args.mode,
+                    providers_path=args.providers,
+                    provider_ids=args.provider,
+                    database_url=os.environ.get("EXPLORER_EVAL_DATABASE_URL"),
+                    confirmed=args.confirm_disposable_database,
+                    live_store=live_store,
+                )
+                print(
+                    json.dumps(
+                        {
+                            "corpus_id": report["corpus_id"],
+                            "output": str(args.output),
+                            "lexical": {k: v for k, v in report["lexical"].items() if k != "queries"},
+                            "provider_runs": len(report["providers"]),
+                        }
+                    )
+                )
+            else:
+                from k8s_explorer.service import Explorer
+
+                explorer = Explorer(Settings())
+                print(
+                    json.dumps(
+                        export_corpus(
+                            explorer.store, explorer.corpus, args.output, args.repo_id, args.max_bytes
+                        )
+                    )
+                )
+            return
         from k8s_explorer.service import Explorer
 
         settings = Settings()

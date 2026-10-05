@@ -524,7 +524,7 @@ class IndexStore:
         missing = [(key, text) for key, text in unique.items() if key not in cached_hashes]
         for offset in range(0, len(missing), 16):
             batch = missing[offset : offset + 16]
-            vectors = provider.embed([text for _, text in batch])
+            vectors = provider.embed_documents([text for _, text in batch])
             with self._connect() as conn:
                 # A replacement may finish while the provider request is in flight.
                 # Do not insert obsolete vectors after that publication's pruning.
@@ -574,7 +574,15 @@ class IndexStore:
         }
 
     def _semantic(
-        self, vector, provider, repo_ids=None, snapshot_id=None, limit=20, exclude=None, query=None
+        self,
+        vector,
+        provider,
+        repo_ids=None,
+        snapshot_id=None,
+        limit=20,
+        exclude=None,
+        query=None,
+        chunk_ids=None,
     ):
         _bounds(limit)
         readiness_clauses, readiness_params = self._filters("s", repo_ids, snapshot_id)
@@ -599,10 +607,13 @@ class IndexStore:
                 "model": provider.model,
             }
         if vector is None:
-            vector = provider.embed([query])[0]
+            vector = provider.embed_query(query)
         clauses, params = self._filters("c", repo_ids, snapshot_id)
         clauses.extend(["v.provider=%s", "v.dimensions=%s", "%s=ANY(s.semantic_providers)"])
         params.extend([provider.cache_key, provider.dimensions, provider.cache_key])
+        if chunk_ids is not None:
+            clauses.append("c.id=ANY(%s)")
+            params.append(chunk_ids)
         if exclude:
             clauses.append("c.id<>%s")
             params.append(exclude)
@@ -646,10 +657,10 @@ class IndexStore:
             note="Only snapshots fully indexed with this provider are searched",
         )
 
-    def semantic_search(self, query, provider, repo_ids=None, snapshot_id=None, limit=20):
+    def semantic_search(self, query, provider, repo_ids=None, snapshot_id=None, limit=20, chunk_ids=None):
         if not isinstance(query, str) or not query.strip() or len(query.encode()) > 32_000:
             raise ValueError("Semantic query must contain 1..32000 bytes")
-        return self._semantic(None, provider, repo_ids, snapshot_id, limit, query=query)
+        return self._semantic(None, provider, repo_ids, snapshot_id, limit, query=query, chunk_ids=chunk_ids)
 
     def similar_chunks(self, chunk_id, provider, repo_ids=None, snapshot_id=None, limit=20):
         rows = self._query(

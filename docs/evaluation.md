@@ -60,7 +60,7 @@ worker concurrency, memory limits, cleanup cadence, or approximate indexes.
 - Automated tests cover disposable Git updates and retention, parser coverage,
   reference resolution, transactional publication, vector SQL, cache/readiness
   invalidation, overlapping syncs, response bounds, and real MCP HTTP transport.
-- The current suite has 86 passing tests and one optional real embedding
+- The first-PR suite had 86 passing tests and one optional real embedding
   provider test skipped. Exact pgvector operations use explicitly seeded numeric
   fixtures; model relevance has not been assessed.
 - First-PR review added pre-construction YAML node/byte limits, malformed-resource
@@ -88,3 +88,26 @@ false integration claims, tool calls, returned bytes, and unresolved graph
 references. Then compare real embedding models on the same queries and source
 snapshots. Use those measurements to prioritize namespace/context resolution,
 application aliases, discovery ranking, and combined workflows.
+
+## Benchmark preparation
+
+The [embedding evaluation guide](embedding-evaluation.md) now documents export,
+calibration rebinding, provider configuration, costs, and isolated benchmark runs.
+The [CPU serving guide](embedding-serving.md) is the handoff to the HCC agent.
+
+Re-parsing the retained pilot commits above with shared 8,000-byte chunking produces
+2,053 source-verified chunks, with 1,841 unique document texts. The 50-question
+calibration set has 45 sparse positive judgments and five inspected negative
+passages; 15 questions include explicit kind predicates for the structured baseline.
+All judged passages remained unchanged under the new chunking. Local OpenAI
+tokenization measures 508,320 document tokens plus 800 query tokens, with a largest
+chunk of 5,513 tokens. A lexical-only run verifies the harness; it does not select
+an embedding provider or establish final retrieval quality. Corpus artifacts and
+reports remain local under ignored `.data/evaluation/`.
+
+Preparation checks pass: 151 offline tests and 25 disposable PostgreSQL integration
+tests, with one optional real-provider test skipped. Lint, all three workflow
+checks, and 21 rendered Kubernetes resources pass. The isolated benchmark task
+also completed lexical calibration and removed its temporary database.
+These checks validate protocols, provenance, retrieval mechanics, and packaging;
+real provider relevance and CPU serving behavior await the HCC run.
