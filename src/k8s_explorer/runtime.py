@@ -123,7 +123,13 @@ def sync_catalogue(explorer: Explorer, path: Path | None = None, limit: int | No
             except Exception as exc:
                 results.append({"repo_id": repo.id, "name": repo.name, "error_type": type(exc).__name__})
                 logger.warning("Repository sync failed for %s (%s)", repo.name, type(exc).__name__)
+    ingestion_failed = sum("error_type" in r for r in results)
+    semantic_failed = sum(
+        isinstance(r.get("semantic"), dict) and r["semantic"].get("available") is False for r in results
+    )
     return {
         "items": sorted(results, key=lambda r: r["name"]),
-        "failed": sum("error_type" in r for r in results),
+        "failed": ingestion_failed + semantic_failed,
+        "ingestion_failed": ingestion_failed,
+        "semantic_failed": semantic_failed,
     }

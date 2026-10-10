@@ -26,6 +26,12 @@ def main() -> None:
     call.add_argument("tool")
     call.add_argument("--args", default="{}", help="JSON object of tool arguments")
     sub.add_parser("tools", help="Print tool input/output schemas")
+    smoke = sub.add_parser("check-serving", help="Read-only authenticated MCP and source-evidence check")
+    smoke.add_argument("--query", default="CloudNativePG PostgreSQL backup configuration")
+    smoke.add_argument("--expected-model", default="voyage-4")
+    smoke.add_argument("--expected-dimensions", type=int, default=1024)
+    smoke.add_argument("--expected-protocol", choices=("voyage", "openai", "tei"), default="voyage")
+    smoke.add_argument("--min-ready-repositories", type=int, default=1)
     discover = sub.add_parser(
         "discover", help="Discover public GitHub repos by topic; print a YAML catalogue"
     )
@@ -61,6 +67,28 @@ def main() -> None:
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, stream=sys.stderr, format="%(levelname)s %(message)s")
     try:
+        if args.command == "check-serving":
+            import os
+
+            from k8s_explorer.smoke import ServingCheckError, check_serving
+
+            try:
+                result = asyncio.run(
+                    check_serving(
+                        os.environ.get("EXPLORER_SMOKE_URL", ""),
+                        os.environ.get("EXPLORER_SMOKE_TOKEN", ""),
+                        args.query,
+                        expected_model=args.expected_model,
+                        expected_dimensions=args.expected_dimensions,
+                        expected_protocol=args.expected_protocol,
+                        min_ready_repositories=args.min_ready_repositories,
+                    )
+                )
+            except ServingCheckError as exc:
+                print(json.dumps({"error": str(exc), "error_type": "ServingCheckError"}), file=sys.stderr)
+                sys.exit(1)
+            print(json.dumps(result))
+            return
         if args.command == "eval":
             import os
 
@@ -155,10 +183,12 @@ def main() -> None:
             while not stop.is_set():
                 try:
                     result = sync_catalogue(explorer)
-                    logging.info(
-                        "Corpus sync completed: %d repositories, %d failures",
+                    logging.log(
+                        logging.WARNING if result["failed"] else logging.INFO,
+                        "Corpus sync completed: %d repositories, %d ingestion failures, %d semantic failures",
                         len(result["items"]),
-                        result["failed"],
+                        result["ingestion_failed"],
+                        result["semantic_failed"],
                     )
                 except Exception as exc:
                     logging.error("Corpus sync failed (%s)", type(exc).__name__)

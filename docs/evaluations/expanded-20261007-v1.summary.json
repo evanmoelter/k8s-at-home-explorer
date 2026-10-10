@@ -1,0 +1,670 @@
+{
+  "schema_version": 1,
+  "experiment": "expanded-20261007-v1",
+  "application_commit": "f0d54ffdfb748a145a51f6187281bd2c3148cf98",
+  "corpus_id": "5aec6cac449b1f32cd73108f7c9d904ec1d3dcae86bc659f401f51d4fb0e3315",
+  "corpus_sha256": "fda92e2c30c4eb719a30c1a0d8cdcb231e6e9f00b8a26e21d96c2d4f8040f416",
+  "judgments_sha256": "169e01bd486de352636b28ba633e40555fefec3ad502a016b54c6cda2be5aa66",
+  "purpose": "calibration",
+  "judgment_coverage": "sparse",
+  "queries": 50,
+  "answerable_queries": 45,
+  "pattern_groups": 36,
+  "filtered_queries": 35,
+  "repository_filtered_queries": 27,
+  "structured_predicate_queries": 15,
+  "corpus_statistics": {
+    "repositories": 20,
+    "chunks": 17307,
+    "exact_duplicate_groups": 959,
+    "source_bytes": 22485493,
+    "unique_document_texts": 15027,
+    "unique_document_bytes": 17201218,
+    "unique_document_lexical_tokens": 1325692
+  },
+  "lexical": {
+    "method": "BM25",
+    "input_fields": [
+      "path",
+      "content"
+    ],
+    "latency_scope": "In-memory tokenization/scoring, source filters, and ranking",
+    "k1": 1.2,
+    "b": 0.75,
+    "indexing_seconds": 0.6922048489795998,
+    "recall_at_10": 0.6666666666666666,
+    "mrr_at_10": 0.42592592592592593,
+    "ndcg_at_10": 0.48326416655819965,
+    "answerable_queries": 45,
+    "no_positive_queries": 5,
+    "retrieval_exposure": {
+      "retrieved_results": 448,
+      "judged_negative_results": 3,
+      "unjudged_results": 415
+    },
+    "latency_seconds": {
+      "mean": 0.03265085646184161,
+      "p95": 0.10676840000087395
+    }
+  },
+  "providers": [
+    {
+      "model": "text-embedding-3-small",
+      "dimensions": 1536,
+      "protocol": "openai",
+      "model_revision": null,
+      "provider_id": "465a1fed6a978ca4308cae0e105b15b0d7f60cda5ddc1c0164fb9de4eddf9fae",
+      "report_path": "openai-v2/report.json",
+      "report_sha256": "65a99b44390b80f7e785650b1168338ae3fc3967bc2ab5ee0cbd7f609c18f493",
+      "reported_job_duration_seconds": 517,
+      "indexing_seconds": 482.7239342650282,
+      "usage": {
+        "requests": 1002,
+        "successful_requests": 1002,
+        "failed_requests": 0,
+        "document_requests": 952,
+        "query_requests": 50,
+        "input_texts": 15077,
+        "input_bytes": 17205217,
+        "response_bytes": 444723143,
+        "reported_total_tokens": 4566334,
+        "token_usage_reports": 1002,
+        "elapsed_seconds": 468.978849
+      },
+      "price_per_million_tokens_usd": 0.02,
+      "estimated_list_price_usd": 0.09132668000000001,
+      "actual_charge_usd": null,
+      "dense": {
+        "method": "exact_pgvector_cosine",
+        "input_fields": [
+          "content"
+        ],
+        "latency_scope": "Query HTTP embedding plus exact PostgreSQL filters/ranking",
+        "recall_at_10": 0.7333333333333333,
+        "mrr_at_10": 0.4467195767195767,
+        "ndcg_at_10": 0.5153320691127545,
+        "answerable_queries": 45,
+        "no_positive_queries": 5,
+        "retrieval_exposure": {
+          "retrieved_results": 448,
+          "judged_negative_results": 5,
+          "unjudged_results": 410
+        },
+        "latency_seconds": {
+          "mean": 0.3742901077948045,
+          "p95": 0.7279605640214868
+        },
+        "judged_positive_hit_queries": [
+          "pilot-002",
+          "pilot-004",
+          "pilot-005",
+          "pilot-007",
+          "pilot-008",
+          "pilot-009",
+          "pilot-010",
+          "pilot-011",
+          "pilot-012",
+          "pilot-013",
+          "pilot-014",
+          "pilot-016",
+          "pilot-018",
+          "pilot-019",
+          "pilot-020",
+          "pilot-021",
+          "pilot-022",
+          "pilot-023",
+          "pilot-024",
+          "pilot-026",
+          "pilot-027",
+          "pilot-028",
+          "pilot-029",
+          "pilot-030",
+          "pilot-031",
+          "pilot-032",
+          "pilot-034",
+          "pilot-036",
+          "pilot-038",
+          "pilot-040",
+          "pilot-041",
+          "pilot-042",
+          "pilot-045"
+        ],
+        "misses_with_unjudged_identical_text": []
+      },
+      "hybrid": {
+        "method": "lexical+dense RRF",
+        "constant": 60,
+        "latency_scope": "Sequential sum of lexical, dense, and fusion query time",
+        "recall_at_10": 0.7333333333333333,
+        "mrr_at_10": 0.43150793650793656,
+        "ndcg_at_10": 0.5043226090243074,
+        "answerable_queries": 45,
+        "no_positive_queries": 5,
+        "retrieval_exposure": {
+          "retrieved_results": 448,
+          "judged_negative_results": 4,
+          "unjudged_results": 411
+        },
+        "latency_seconds": {
+          "mean": 0.4071616158564575,
+          "p95": 0.8345138439908624
+        },
+        "judged_positive_hit_queries": [
+          "pilot-002",
+          "pilot-004",
+          "pilot-005",
+          "pilot-006",
+          "pilot-007",
+          "pilot-008",
+          "pilot-009",
+          "pilot-010",
+          "pilot-011",
+          "pilot-012",
+          "pilot-013",
+          "pilot-016",
+          "pilot-018",
+          "pilot-020",
+          "pilot-021",
+          "pilot-022",
+          "pilot-024",
+          "pilot-025",
+          "pilot-026",
+          "pilot-027",
+          "pilot-028",
+          "pilot-029",
+          "pilot-030",
+          "pilot-032",
+          "pilot-034",
+          "pilot-036",
+          "pilot-037",
+          "pilot-038",
+          "pilot-040",
+          "pilot-042",
+          "pilot-043",
+          "pilot-044",
+          "pilot-045"
+        ],
+        "misses_with_unjudged_identical_text": [
+          {
+            "query_id": "pilot-031",
+            "unjudged_identical_chunk_ids": [
+              "28d035595b05b9c6c4262f665ec955cf",
+              "62b96dab0392b482fec2626ec0a5d6ef",
+              "866734964d19146d173eda88e0f16804",
+              "5ca99ae43795024a02a3460fa0ae2f28"
+            ]
+          }
+        ]
+      },
+      "fusion_hit_changes": {
+        "gained": [
+          "pilot-006",
+          "pilot-025",
+          "pilot-037",
+          "pilot-043",
+          "pilot-044"
+        ],
+        "lost": [
+          "pilot-014",
+          "pilot-019",
+          "pilot-023",
+          "pilot-031",
+          "pilot-041"
+        ]
+      }
+    },
+    {
+      "model": "voyage-code-4",
+      "dimensions": 1024,
+      "protocol": "voyage",
+      "model_revision": null,
+      "provider_id": "8007404fe895fb335dac6650d3cf7aa339f092f5559c8f71a060f67104e2091a",
+      "report_path": "voyage-code-v2/report.json",
+      "report_sha256": "9298381ef2b9fcb7643107860e346189d84648bd78ac7a6a4fa444916e7cfdfe",
+      "reported_job_duration_seconds": 386,
+      "indexing_seconds": 354.47497558494797,
+      "usage": {
+        "requests": 1002,
+        "successful_requests": 1002,
+        "failed_requests": 0,
+        "document_requests": 952,
+        "query_requests": 50,
+        "input_texts": 15077,
+        "input_bytes": 17205217,
+        "response_bytes": 192125914,
+        "reported_total_tokens": 4705885,
+        "token_usage_reports": 1002,
+        "elapsed_seconds": 344.171996
+      },
+      "price_per_million_tokens_usd": 0.12,
+      "estimated_list_price_usd": 0.5647062,
+      "actual_charge_usd": null,
+      "dense": {
+        "method": "exact_pgvector_cosine",
+        "input_fields": [
+          "content"
+        ],
+        "latency_scope": "Query HTTP embedding plus exact PostgreSQL filters/ranking",
+        "recall_at_10": 0.6444444444444445,
+        "mrr_at_10": 0.34484126984126984,
+        "ndcg_at_10": 0.4167109942376504,
+        "answerable_queries": 45,
+        "no_positive_queries": 5,
+        "retrieval_exposure": {
+          "retrieved_results": 448,
+          "judged_negative_results": 4,
+          "unjudged_results": 415
+        },
+        "latency_seconds": {
+          "mean": 0.24910084642469882,
+          "p95": 0.41256716602947563
+        },
+        "judged_positive_hit_queries": [
+          "pilot-002",
+          "pilot-004",
+          "pilot-006",
+          "pilot-007",
+          "pilot-009",
+          "pilot-010",
+          "pilot-012",
+          "pilot-013",
+          "pilot-014",
+          "pilot-016",
+          "pilot-018",
+          "pilot-019",
+          "pilot-021",
+          "pilot-022",
+          "pilot-023",
+          "pilot-024",
+          "pilot-026",
+          "pilot-027",
+          "pilot-028",
+          "pilot-030",
+          "pilot-032",
+          "pilot-034",
+          "pilot-036",
+          "pilot-038",
+          "pilot-040",
+          "pilot-042",
+          "pilot-043",
+          "pilot-044",
+          "pilot-045"
+        ],
+        "misses_with_unjudged_identical_text": [
+          {
+            "query_id": "pilot-031",
+            "unjudged_identical_chunk_ids": [
+              "28d035595b05b9c6c4262f665ec955cf",
+              "5ca99ae43795024a02a3460fa0ae2f28",
+              "62b96dab0392b482fec2626ec0a5d6ef",
+              "81ef16375885b15cc29a967804e64834",
+              "866734964d19146d173eda88e0f16804"
+            ]
+          }
+        ]
+      },
+      "hybrid": {
+        "method": "lexical+dense RRF",
+        "constant": 60,
+        "latency_scope": "Sequential sum of lexical, dense, and fusion query time",
+        "recall_at_10": 0.8222222222222222,
+        "mrr_at_10": 0.4788888888888889,
+        "ndcg_at_10": 0.5603164517320334,
+        "answerable_queries": 45,
+        "no_positive_queries": 5,
+        "retrieval_exposure": {
+          "retrieved_results": 448,
+          "judged_negative_results": 4,
+          "unjudged_results": 407
+        },
+        "latency_seconds": {
+          "mean": 0.2827989845303819,
+          "p95": 0.5201363400556147
+        },
+        "judged_positive_hit_queries": [
+          "pilot-002",
+          "pilot-004",
+          "pilot-005",
+          "pilot-006",
+          "pilot-007",
+          "pilot-008",
+          "pilot-009",
+          "pilot-010",
+          "pilot-012",
+          "pilot-013",
+          "pilot-014",
+          "pilot-015",
+          "pilot-016",
+          "pilot-017",
+          "pilot-018",
+          "pilot-020",
+          "pilot-021",
+          "pilot-022",
+          "pilot-023",
+          "pilot-024",
+          "pilot-025",
+          "pilot-026",
+          "pilot-027",
+          "pilot-028",
+          "pilot-029",
+          "pilot-030",
+          "pilot-032",
+          "pilot-033",
+          "pilot-034",
+          "pilot-036",
+          "pilot-037",
+          "pilot-038",
+          "pilot-040",
+          "pilot-042",
+          "pilot-043",
+          "pilot-044",
+          "pilot-045"
+        ],
+        "misses_with_unjudged_identical_text": [
+          {
+            "query_id": "pilot-031",
+            "unjudged_identical_chunk_ids": [
+              "28d035595b05b9c6c4262f665ec955cf",
+              "62b96dab0392b482fec2626ec0a5d6ef",
+              "866734964d19146d173eda88e0f16804",
+              "5ca99ae43795024a02a3460fa0ae2f28"
+            ]
+          }
+        ]
+      },
+      "fusion_hit_changes": {
+        "gained": [
+          "pilot-005",
+          "pilot-008",
+          "pilot-015",
+          "pilot-017",
+          "pilot-020",
+          "pilot-025",
+          "pilot-029",
+          "pilot-033",
+          "pilot-037"
+        ],
+        "lost": [
+          "pilot-019"
+        ]
+      }
+    },
+    {
+      "model": "voyage-4",
+      "dimensions": 1024,
+      "protocol": "voyage",
+      "model_revision": null,
+      "provider_id": "cbb0f6d3823eea9df10a72249ea0fd6d4ccd43fc8faa53da2d4054d1dc29e669",
+      "report_path": "voyage-v2/report.json",
+      "report_sha256": "353a63452fe0d16c872436c3f405f34e9d3b8e65b423f4f3f28d3825d2089924",
+      "reported_job_duration_seconds": 558,
+      "indexing_seconds": 527.1352491729776,
+      "usage": {
+        "requests": 1002,
+        "successful_requests": 1002,
+        "failed_requests": 0,
+        "document_requests": 952,
+        "query_requests": 50,
+        "input_texts": 15077,
+        "input_bytes": 17205217,
+        "response_bytes": 192281260,
+        "reported_total_tokens": 4705885,
+        "token_usage_reports": 1002,
+        "elapsed_seconds": 517.726669
+      },
+      "price_per_million_tokens_usd": 0.06,
+      "estimated_list_price_usd": 0.2823531,
+      "actual_charge_usd": null,
+      "dense": {
+        "method": "exact_pgvector_cosine",
+        "input_fields": [
+          "content"
+        ],
+        "latency_scope": "Query HTTP embedding plus exact PostgreSQL filters/ranking",
+        "recall_at_10": 0.8222222222222222,
+        "mrr_at_10": 0.5453968253968254,
+        "ndcg_at_10": 0.6113329396195457,
+        "answerable_queries": 45,
+        "no_positive_queries": 5,
+        "retrieval_exposure": {
+          "retrieved_results": 448,
+          "judged_negative_results": 4,
+          "unjudged_results": 407
+        },
+        "latency_seconds": {
+          "mean": 0.2609897848404944,
+          "p95": 0.41049427998950705
+        },
+        "judged_positive_hit_queries": [
+          "pilot-002",
+          "pilot-004",
+          "pilot-005",
+          "pilot-006",
+          "pilot-007",
+          "pilot-008",
+          "pilot-009",
+          "pilot-010",
+          "pilot-011",
+          "pilot-012",
+          "pilot-013",
+          "pilot-014",
+          "pilot-016",
+          "pilot-017",
+          "pilot-018",
+          "pilot-019",
+          "pilot-020",
+          "pilot-021",
+          "pilot-022",
+          "pilot-024",
+          "pilot-025",
+          "pilot-026",
+          "pilot-027",
+          "pilot-028",
+          "pilot-029",
+          "pilot-030",
+          "pilot-032",
+          "pilot-033",
+          "pilot-034",
+          "pilot-036",
+          "pilot-038",
+          "pilot-039",
+          "pilot-040",
+          "pilot-041",
+          "pilot-042",
+          "pilot-043",
+          "pilot-044"
+        ],
+        "misses_with_unjudged_identical_text": [
+          {
+            "query_id": "pilot-031",
+            "unjudged_identical_chunk_ids": [
+              "28d035595b05b9c6c4262f665ec955cf",
+              "5ca99ae43795024a02a3460fa0ae2f28"
+            ]
+          },
+          {
+            "query_id": "pilot-045",
+            "unjudged_identical_chunk_ids": [
+              "3859c193277f9323db11651d44a0db59"
+            ]
+          }
+        ]
+      },
+      "hybrid": {
+        "method": "lexical+dense RRF",
+        "constant": 60,
+        "latency_scope": "Sequential sum of lexical, dense, and fusion query time",
+        "recall_at_10": 0.7777777777777778,
+        "mrr_at_10": 0.4962962962962963,
+        "ndcg_at_10": 0.5633954002367098,
+        "answerable_queries": 45,
+        "no_positive_queries": 5,
+        "retrieval_exposure": {
+          "retrieved_results": 448,
+          "judged_negative_results": 4,
+          "unjudged_results": 409
+        },
+        "latency_seconds": {
+          "mean": 0.29339740828378125,
+          "p95": 0.505650625040289
+        },
+        "judged_positive_hit_queries": [
+          "pilot-002",
+          "pilot-004",
+          "pilot-005",
+          "pilot-006",
+          "pilot-007",
+          "pilot-008",
+          "pilot-009",
+          "pilot-010",
+          "pilot-011",
+          "pilot-012",
+          "pilot-013",
+          "pilot-016",
+          "pilot-017",
+          "pilot-018",
+          "pilot-019",
+          "pilot-020",
+          "pilot-021",
+          "pilot-022",
+          "pilot-024",
+          "pilot-025",
+          "pilot-026",
+          "pilot-027",
+          "pilot-028",
+          "pilot-029",
+          "pilot-030",
+          "pilot-032",
+          "pilot-033",
+          "pilot-034",
+          "pilot-036",
+          "pilot-037",
+          "pilot-038",
+          "pilot-040",
+          "pilot-042",
+          "pilot-043",
+          "pilot-044"
+        ],
+        "misses_with_unjudged_identical_text": [
+          {
+            "query_id": "pilot-031",
+            "unjudged_identical_chunk_ids": [
+              "28d035595b05b9c6c4262f665ec955cf",
+              "62b96dab0392b482fec2626ec0a5d6ef"
+            ]
+          },
+          {
+            "query_id": "pilot-045",
+            "unjudged_identical_chunk_ids": [
+              "3859c193277f9323db11651d44a0db59"
+            ]
+          }
+        ]
+      },
+      "fusion_hit_changes": {
+        "gained": [
+          "pilot-037"
+        ],
+        "lost": [
+          "pilot-014",
+          "pilot-039",
+          "pilot-041"
+        ]
+      }
+    }
+  ],
+  "shortlist_hit_overlap": {
+    "both": 33,
+    "only_voyage_4_dense": [
+      "pilot-011",
+      "pilot-019",
+      "pilot-039",
+      "pilot-041"
+    ],
+    "only_voyage_code_4_hybrid": [
+      "pilot-015",
+      "pilot-023",
+      "pilot-037",
+      "pilot-045"
+    ],
+    "union": 41,
+    "interpretation": "Diagnostic coverage union, not a measured combined retrieval method"
+  },
+  "cpu": {
+    "qwen": {
+      "report_path": "qwen-v3/cancellation-request.json",
+      "outcome": "cancelled",
+      "completed_unique_documents": 1966,
+      "total_unique_documents": 15027,
+      "reported_elapsed_hours_approximate": 4,
+      "quality_report": false,
+      "serving": {
+        "model_id": "Qwen/Qwen3-Embedding-0.6B",
+        "model_sha": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+        "model_dtype": "float32",
+        "model_type": {
+          "embedding": {
+            "pooling": "last_token"
+          }
+        },
+        "max_input_length": 5760,
+        "max_batch_tokens": 5760,
+        "max_batch_requests": 4,
+        "tokenization_workers": 2,
+        "version": "1.9.4",
+        "sha": "e80ef225ed0e6cb1717ce632a6a84b6cf211bb67"
+      },
+      "evidence_sha256": "178141f9296170abe572b35422720f70871b7b1a83ae54fe5ee4b9e25f77a169"
+    },
+    "bge": {
+      "report_path": "bge-smoke-v1/report.json",
+      "outcome": "time_budget_reached",
+      "elapsed_seconds": 600.0011790459976,
+      "completed_documents": 144,
+      "total_unique_documents": 15027,
+      "documents_per_second": 0.24097128000085002,
+      "projected_embedding_hours": 17.322257933194123,
+      "projection_limits": "Incomplete batch time included but outputs excluded; byte-length strata; no database indexing cost",
+      "query_count": 10,
+      "query_latency_seconds": {
+        "median": 0.2031574355205521,
+        "p95": 0.44625428499421105
+      },
+      "sampled_peak_working_set_bytes": 11882721280.0,
+      "sampled_peak_rss_bytes": 10800906240.0,
+      "quality_report": false,
+      "serving": {
+        "model_id": "BAAI/bge-m3",
+        "model_sha": "5617a9f61b028005a4858fdac845db406aefb181",
+        "model_dtype": "float32",
+        "model_type": {
+          "embedding": {
+            "pooling": "cls"
+          }
+        },
+        "max_input_length": 8192,
+        "max_batch_tokens": 8192,
+        "max_batch_requests": 8,
+        "tokenization_workers": 2,
+        "version": "1.9.4",
+        "sha": "e80ef225ed0e6cb1717ce632a6a84b6cf211bb67"
+      },
+      "evidence_sha256": "75ce82a60fd44bd10506170941efe9dd259169cefff7dd56850153a4b79ae5fb"
+    }
+  },
+  "pricing_checked_on": "2026-10-07",
+  "pricing_sources": [
+    "https://developers.openai.com/api/docs/models/text-embedding-3-small",
+    "https://docs.voyageai.com/docs/pricing"
+  ],
+  "estimated_total_list_price_usd": 0.9383859800000001,
+  "actual_total_charge_usd": null,
+  "limits": [
+    "Sparse source-specific calibration judgments from three repositories",
+    "Only one positive passage per answerable question; equivalent evidence remains unjudged",
+    "Many questions have repository or kind filters; these are not all corpus-wide searches",
+    "Pattern groups share evidence; query observations are not independent",
+    "No generated-answer or integration-claim assessment",
+    "CPU trials do not establish relevance or optimized-serving capacity"
+  ]
+}

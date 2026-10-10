@@ -36,6 +36,8 @@ class Settings(BaseSettings):
     embedding_query_prompt_name: str | None = Field(default=None, max_length=500)
     embedding_document_prompt_name: str | None = Field(default=None, max_length=500)
     embedding_request_timeout_seconds: float = Field(default=60, ge=1, le=1800, allow_inf_nan=False)
+    embedding_max_retries: int = Field(default=2, ge=0, le=5)
+    embedding_retry_max_delay_seconds: float = Field(default=10, ge=1, le=60, allow_inf_nan=False)
     api_token: SecretStr | None = None
     allowed_http_hosts: list[str] = ["localhost", "127.0.0.1", "testserver", "k8s-explorer"]
     host: str = "127.0.0.1"

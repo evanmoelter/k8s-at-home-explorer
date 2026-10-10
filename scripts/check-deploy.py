@@ -205,13 +205,42 @@ def check_flux(documents: list[dict]) -> None:
     ), "Flux and direct Helm must share the same values"
 
 
+def check_voyage(documents: list[dict]) -> None:
+    check_helm(documents)
+    deployment = next(document for document in documents if document["kind"] == "Deployment")
+    containers = deployment["spec"]["template"]["spec"]["containers"]
+    expected = {
+        "EXPLORER_EMBEDDING_PROTOCOL": "voyage",
+        "EXPLORER_EMBEDDING_URL": "https://api.voyageai.com/v1/embeddings",
+        "EXPLORER_EMBEDDING_MODEL": "voyage-4",
+        "EXPLORER_EMBEDDING_DIMENSIONS": "1024",
+        "EXPLORER_EMBEDDING_REQUESTED_DIMENSIONS": "1024",
+    }
+    for name in ("api", "worker"):
+        container = next(item for item in containers if item["name"] == name)
+        env = {item["name"]: item for item in container["env"]}
+        for key, value in expected.items():
+            assert env[key]["value"] == value
+        assert env["EXPLORER_EMBEDDING_API_KEY"]["valueFrom"] == {
+            "secretKeyRef": {"name": "explorer-credentials", "key": "EXPLORER_EMBEDDING_API_KEY"},
+        }
+
+
 def main() -> None:
     check_local(render("deploy/local"))
     check_helm(render_helm())
+    check_voyage(
+        render_helm(
+            values=[
+                "deploy/helm/app-template/values.yaml",
+                "deploy/helm/app-template/voyage-4-values.yaml",
+            ]
+        )
+    )
     check_flux(render("deploy/helm"))
     for provider in EMBEDDING_MODELS:
         check_embeddings(render_embeddings(provider), provider)
-    print("Local, Helm, Flux, and CPU embedding rendering and safety checks passed.")
+    print("Local, Helm, Flux, Voyage, and CPU embedding rendering and safety checks passed.")
 
 
 if __name__ == "__main__":
@@ -220,6 +249,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.helm_only:
         documents = render_helm()
+        documents.extend(
+            render_helm(
+                values=[
+                    "deploy/helm/app-template/values.yaml",
+                    "deploy/helm/app-template/voyage-4-values.yaml",
+                ]
+            )
+        )
         for provider in EMBEDDING_MODELS:
             documents.extend(render_embeddings(provider))
         print(yaml.safe_dump_all(documents, sort_keys=False))

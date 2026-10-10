@@ -115,11 +115,37 @@ Git locks may require manual recovery:
 3. Restart the worker and rerun ingestion; the previous published scan remains
    available until a replacement completes successfully.
 
-To validate a real model after choosing one, set `EXPLORER_TEST_EMBEDDING_URL`,
-`EXPLORER_TEST_EMBEDDING_MODEL`, and `EXPLORER_TEST_EMBEDDING_DIMENSIONS` before
-`mise run test:integration`; use `EXPLORER_TEST_EMBEDDING_API_KEY` when required. The
-ordinary integration suite validates pgvector using explicit numeric fixtures;
-the real-model test remains skipped until configured.
+## Real-provider serving validation
+
+The integration task creates and removes its own database. The real-model checks
+are opt-in and use provider calls; provision a key with a spending budget before
+running them. For the selected provider, configure these non-secret settings:
+
+```sh
+export EXPLORER_TEST_EMBEDDING_URL=https://api.voyageai.com/v1/embeddings
+export EXPLORER_TEST_EMBEDDING_PROTOCOL=voyage
+export EXPLORER_TEST_EMBEDDING_MODEL=voyage-4
+export EXPLORER_TEST_EMBEDDING_DIMENSIONS=1024
+export EXPLORER_TEST_EMBEDDING_REQUESTED_DIMENSIONS=1024
+# Supply EXPLORER_TEST_EMBEDDING_API_KEY from your private secret environment.
+mise run test:integration -- -k 'real_embedding_provider_and_cache or real_model_authenticated_serving'
+```
+
+Both tests use tiny generated fixtures rather than the community corpus. They
+verify real document/query calls, vector cache reuse, authenticated HTTP MCP,
+complete index readiness, and commit/hash-matched source evidence. They test
+serving correctness, without treating document/query vector similarity as an
+identity assertion or measuring relevance quality. Protocol fixtures never
+substitute generated vectors into semantic search. With no test provider settings,
+both checks skip explicitly; partial configurations fail. Other adapter settings
+accept the same `EXPLORER_TEST_EMBEDDING_*` prefix, including preprocessing,
+revision, timeout, and retries. The ordinary suite remains offline with respect
+to embedding APIs and validates SQL vector arithmetic using numeric fixtures.
+
+The [read-only deployment smoke task](deployment.md#voyage-4-deployment-profile)
+can check an installed endpoint without accessing its database or credentials for
+ingestion. The separate HCC executor should run the opt-in disposable tests and
+then the serving smoke after configuring and ingesting the cluster installation.
 
 `mise run check` also validates all three workflows with mise-pinned actionlint
 and ShellCheck, including the gated multi-platform GHCR publish job.

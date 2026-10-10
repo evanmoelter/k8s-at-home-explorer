@@ -5,13 +5,33 @@ import json
 import math
 import threading
 import time
+from datetime import UTC, datetime
+from email.utils import parsedate_to_datetime
 from typing import Literal
 
 import httpx
 
 
 class EmbeddingError(ValueError):
-    pass
+    def __init__(self, message: str, *, retryable: bool = False, retry_after: float | None = None):
+        super().__init__(message)
+        self.retryable = retryable
+        self.retry_after = retry_after
+
+
+def retry_after_seconds(value: str | None) -> float | None:
+    """Parse HTTP Retry-After without returning untrusted header text in errors."""
+    if not value or len(value) > 128:
+        return None
+    try:
+        if value.strip().isdigit():
+            return float(value.strip())
+        deadline = parsedate_to_datetime(value)
+        if deadline.tzinfo is None:
+            return None
+        return max(0.0, (deadline - datetime.now(UTC)).total_seconds())
+    except (ValueError, TypeError, OverflowError):
+        return None
 
 
 class HTTPEmbeddingProvider:
@@ -37,6 +57,8 @@ class HTTPEmbeddingProvider:
         query_prompt_name: str | None = None,
         document_prompt_name: str | None = None,
         request_timeout_seconds: float = 60,
+        max_retries: int = 2,
+        retry_max_delay_seconds: float = 10,
     ):
         if type(dimensions) is not int or not 1 <= dimensions <= 16000:
             raise ValueError("Invalid embedding dimensions")
@@ -52,6 +74,14 @@ class HTTPEmbeddingProvider:
             or not 1 <= request_timeout_seconds <= 1800
         ):
             raise ValueError("Embedding request timeout must be 1..1800 seconds")
+        if type(max_retries) is not int or not 0 <= max_retries <= 5:
+            raise ValueError("Embedding max retries must be 0..5")
+        if (
+            type(retry_max_delay_seconds) not in (int, float)
+            or not math.isfinite(retry_max_delay_seconds)
+            or not 1 <= retry_max_delay_seconds <= 60
+        ):
+            raise ValueError("Embedding retry maximum delay must be 1..60 seconds")
         try:
             parsed = httpx.URL(url)
         except (httpx.InvalidURL, TypeError):
@@ -104,6 +134,8 @@ class HTTPEmbeddingProvider:
         self.query_prompt_name = query_prompt_name
         self.document_prompt_name = document_prompt_name
         self.request_timeout_seconds = float(request_timeout_seconds)
+        self.max_retries = max_retries
+        self.retry_max_delay_seconds = float(retry_max_delay_seconds)
         self._configuration = {
             "url": self.url,
             "model": model,
@@ -135,6 +167,8 @@ class HTTPEmbeddingProvider:
             "reported_total_tokens": 0,
             "token_usage_reports": 0,
             "elapsed_seconds": 0.0,
+            "retries": 0,
+            "retry_delay_seconds": 0.0,
         }
 
     @property
@@ -143,6 +177,8 @@ class HTTPEmbeddingProvider:
             **self._configuration,
             "provider_id": self.cache_key,
             "request_timeout_seconds": self.request_timeout_seconds,
+            "max_retries": self.max_retries,
+            "retry_max_delay_seconds": self.retry_max_delay_seconds,
         }
 
     @property
@@ -251,8 +287,28 @@ class HTTPEmbeddingProvider:
             batches.append(batch)
         result = []
         for batch in batches:
-            result.extend(self._request(batch, role))
+            result.extend(self._request_with_retries(batch, role))
         return result
+
+    def _request_with_retries(self, prepared: list[str], role: str) -> list[list[float]]:
+        for attempt in range(self.max_retries + 1):
+            try:
+                return self._request(prepared, role)
+            except EmbeddingError as exc:
+                if not exc.retryable or attempt == self.max_retries:
+                    raise
+                delay = exc.retry_after
+                if delay is None:
+                    delay = min(2.0**attempt, self.retry_max_delay_seconds)
+                # Do not retry early when the provider asks for a longer pause.
+                # The ingestion scheduler can resume it on the next sync.
+                if delay > self.retry_max_delay_seconds:
+                    raise
+                time.sleep(delay)
+                with self._stats_lock:
+                    self._stats["retries"] += 1
+                    self._stats["retry_delay_seconds"] += delay
+        raise AssertionError("Unreachable retry state")
 
     def _request(self, prepared: list[str], role: str) -> list[list[float]]:
         payload = self._payload(prepared, role)
@@ -282,6 +338,16 @@ class HTTPEmbeddingProvider:
             vectors = self._validate(parsed, len(prepared))
             successful = True
             return vectors
+        except httpx.HTTPStatusError as exc:
+            raise EmbeddingError(
+                "Embedding request failed or returned an invalid response",
+                retryable=exc.response.status_code in {408, 429, 500, 502, 503, 504},
+                retry_after=retry_after_seconds(exc.response.headers.get("retry-after")),
+            ) from None
+        except (httpx.TimeoutException, httpx.NetworkError, httpx.RemoteProtocolError):
+            raise EmbeddingError(
+                "Embedding request failed or returned an invalid response", retryable=True
+            ) from None
         except (httpx.HTTPError, KeyError, TypeError, ValueError, OverflowError):
             # Never expose provider response bodies, transport URLs, texts or credentials.
             raise EmbeddingError("Embedding request failed or returned an invalid response") from None

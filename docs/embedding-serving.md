@@ -37,9 +37,13 @@ and [BGE configuration](https://huggingface.co/BAAI/bge-m3/blob/5617a9f61b028005
 The benchmark client adds Qwen's instruction to queries; the server applies no
 default prompt. BGE's sparse and multi-vector modes are outside this dense comparison.
 
-Helm rendering and Kubernetes schemas were checked locally. **No model weights were
-downloaded, no serving pod was started, and CPU inference, memory use, and startup
-time remain untested.** Runtime verification belongs to the serving agent.
+Preparation checked Helm rendering and Kubernetes schemas without downloading
+weights or starting serving pods. The later HCC
+[CPU trials](evaluations/20261007-expanded-calibration.md) measured throughput and
+resources at a two-core allowance and 12Gi memory limit, with different batch
+settings. They produced no completed retrieval-quality reports. The examples'
+resource ceilings remain illustrative; BGE's observed working set reached 11.07Gi
+under its tested configuration. Re-measure when changing batch limits or precision.
 
 ## Render or install through the deployment owner
 

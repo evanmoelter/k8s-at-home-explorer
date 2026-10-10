@@ -1,5 +1,9 @@
 # First corpus pilot
 
+For the subsequent 20-repository hosted comparison and CPU trials, see the
+[2026-10-07 expanded calibration findings](evaluations/20261007-expanded-calibration.md).
+The original pilot observations below remain historical evidence.
+
 The 2026-10-04 pilot uses the three repositories in `config/repositories.yaml`.
 It validates ingestion and composable queries against real source; it does not
 measure semantic model quality or predict full-community capacity.
@@ -110,4 +114,5 @@ tests, with one optional real-provider test skipped. Lint, all three workflow
 checks, and 21 rendered Kubernetes resources pass. The isolated benchmark task
 also completed lexical calibration and removed its temporary database.
 These checks validate protocols, provenance, retrieval mechanics, and packaging;
-real provider relevance and CPU serving behavior await the HCC run.
+real provider relevance and CPU serving behavior were not yet measured at that
+stage. The later HCC measurements are linked above.

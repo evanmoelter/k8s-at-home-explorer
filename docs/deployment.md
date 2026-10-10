@@ -159,6 +159,75 @@ package publishing by Actions. Publication starts on a matching CI trigger.
 
 ## Customize the installation
 
+### Voyage-4 deployment profile
+
+The operator selected `voyage-4` dense retrieval on 2026-10-10 based on the
+[hosted calibration](evaluations/20261007-expanded-calibration.md). Broader
+relevance evaluation is deferred and is not a deployment prerequisite. Provider
+selection remains configurable; the base values do not enable paid calls.
+
+Load [the Voyage overlay](../deploy/helm/app-template/voyage-4-values.yaml)
+after `values.yaml` and before your installation-specific values. It configures
+the native Voyage protocol and requests 1,024 dimensions for both API and worker,
+matching the evaluated settings. Add `EXPLORER_EMBEDDING_API_KEY` to the
+`explorer-credentials` Secret. For Flux, include the overlay in your installation's
+values ConfigMap or copy its entries into HelmRelease values. Keep credentials,
+the database, storage class, route, and catalogue in the installing GitOps repo.
+
+Before calling the installation ready:
+
+1. Pin the published service image digest for all three containers, provision a
+   dedicated pgvector database, and configure corpus storage and credentials.
+2. Start with the [tested 20-repository catalogue](../config/evaluation/repositories.yaml), then expand discovery after a
+   successful serving check. `discover` prints a catalogue; the worker refreshes
+   configured entries but does not automatically discover newly tagged repos.
+3. Check `structured_repositories` and `semantic_search` readiness counts after
+   ingestion. `/health/ready` verifies database/schema access, not embedding
+   completeness. Sync reports `ingestion_failed` and `semantic_failed`, counts
+   both in `failed`, and exits with status 1 if either is nonzero. Transient
+   embedding failures receive bounded retries; exhausted failures retain published
+   source/structured data and cached vector batches for the next sync.
+4. Exercise authenticated HTTP MCP with a real query, follow a returned result to
+   exact source evidence, and confirm a repeat sync reuses unchanged embeddings.
+   The local smoke checks transport/tool availability; use `mise run deploy:smoke`
+   for real semantic serving. The opt-in real-model integration tests support
+   Voyage and verify authenticated MCP, source evidence, and repeat-sync cache reuse
+   in a disposable database; see [development](development.md#real-provider-serving-validation).
+5. Connect the agent client to `/mcp` with its bearer token. Observe exclusions,
+   ingestion failures, memory/storage usage, and exact-search latency before
+   expanding to the full discovered catalogue; adjust capacity from measurements.
+
+The separate HCC agent owns cluster-specific GitOps configuration and execution.
+Benchmark databases are disposable evaluation targets, not the serving database;
+their vector cache is not automatically imported into a new installation.
+
+For an installed endpoint, supply `EXPLORER_SMOKE_URL` (the full `/mcp` URL) and
+`EXPLORER_SMOKE_TOKEN` through your private environment, then run:
+
+```sh
+mise run deploy:smoke -- --min-ready-repositories 20
+```
+
+This read-only check rejects an endpoint that accepts unauthenticated requests,
+checks the model/dimensions, requires every selected scan to be ready, and follows
+up to three real semantic results to their guarded source ranges. It compares
+source lines using the extractor's newline normalization and checks commit and
+content hash. It prints only a summary. Set the minimum to the expected catalogue
+size to detect repositories that never published a scan. Run after ingestion is
+idle; a concurrent refresh can deliberately invalidate a source guard. The query
+embedding is a paid provider call unless covered by the account's allowance.
+
+`EXPLORER_EMBEDDING_MAX_RETRIES` defaults to 2 additional attempts (0–5 allowed).
+Retries apply to HTTP 408/429/500/502/503/504 and transient network/timeout errors,
+with 1-second exponential backoff. `Retry-After` seconds and HTTP dates take
+precedence. `EXPLORER_EMBEDDING_RETRY_MAX_DELAY_SECONDS` defaults to 10 (1–60
+allowed); a longer requested pause fails immediately for the scheduler to revisit,
+instead of retrying before the provider permits it. Authentication, malformed
+responses, and invalid vectors fail without retry. Settings affect both ingestion
+and query requests and do not invalidate cached vectors. Usage statistics count
+every attempt, with separate retry and delay counters; ambiguous transport retries
+may have been processed by the provider, so reported usage is not a billing ledger.
+
 Add these settings to your overlay rather than editing the reusable defaults:
 
 - **Storage:** set `persistence.corpus.size` and, if needed,

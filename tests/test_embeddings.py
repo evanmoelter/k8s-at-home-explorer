@@ -404,3 +404,120 @@ def test_request_timeout_transport_metadata_and_cache_identity(monkeypatch, time
     configured = client_options[0]["timeout"]
     assert configured.read == configured.write == configured.pool == timeout
     assert configured.connect == connect
+
+
+@pytest.mark.parametrize("status", [408, 429, 500, 502, 503, 504])
+def test_transient_status_retries_preserve_roles_and_count_attempts(monkeypatch, status):
+    original = httpx.Client
+    requests, delays = [], []
+
+    def handler(request):
+        requests.append(request)
+        if len(requests) == 1:
+            return httpx.Response(status, headers={"Retry-After": "2"}, json={"error": "private"})
+        return httpx.Response(200, json={"data": [{"index": 0, "embedding": [1, 0]}]})
+
+    monkeypatch.setattr(httpx, "Client", lambda **kw: original(transport=httpx.MockTransport(handler), **kw))
+    monkeypatch.setattr("k8s_explorer.embeddings.time.sleep", delays.append)
+    provider = HTTPEmbeddingProvider("http://localhost/embed", "m", 2, protocol="voyage")
+    assert provider.embed_query("configuration") == [1, 0]
+    assert delays == [2]
+    assert requests[0].content == requests[1].content
+    assert json.loads(requests[1].content)["input_type"] == "query"
+    assert provider.usage_stats["requests"] == provider.usage_stats["query_requests"] == 2
+    assert provider.usage_stats["failed_requests"] == provider.usage_stats["retries"] == 1
+
+
+@pytest.mark.parametrize(
+    "status,header,attempts,delays",
+    [
+        (429, None, 3, [1, 2]),
+        (503, "not a date", 3, [1, 2]),
+        (429, "61", 1, []),
+        (400, None, 1, []),
+        (401, None, 1, []),
+        (403, None, 1, []),
+    ],
+)
+def test_retry_exhaustion_and_permanent_errors(monkeypatch, status, header, attempts, delays):
+    original = httpx.Client
+    requests, sleeps = [], []
+
+    def handler(request):
+        requests.append(request)
+        return httpx.Response(
+            status,
+            headers={"Retry-After": header} if header else {},
+            json={"error": "private-key private-text"},
+        )
+
+    monkeypatch.setattr(httpx, "Client", lambda **kw: original(transport=httpx.MockTransport(handler), **kw))
+    monkeypatch.setattr("k8s_explorer.embeddings.time.sleep", sleeps.append)
+    provider = HTTPEmbeddingProvider("http://localhost/embed", "m", 2, "private-key")
+    with pytest.raises(EmbeddingError) as caught:
+        provider.embed_documents(["private-text"])
+    assert "private" not in str(caught.value)
+    assert len(requests) == provider.usage_stats["failed_requests"] == attempts
+    assert sleeps == delays
+
+
+def test_transport_retry_and_operational_settings_preserve_cache_identity(monkeypatch):
+    original = httpx.Client
+    attempts, sleeps = [], []
+
+    def handler(request):
+        attempts.append(request)
+        if len(attempts) < 3:
+            raise httpx.ReadTimeout("private")
+        return httpx.Response(200, json={"data": [{"index": 0, "embedding": [1, 0]}]})
+
+    monkeypatch.setattr(httpx, "Client", lambda **kw: original(transport=httpx.MockTransport(handler), **kw))
+    monkeypatch.setattr("k8s_explorer.embeddings.time.sleep", sleeps.append)
+    provider = HTTPEmbeddingProvider(
+        "http://localhost/embed", "m", 2, max_retries=3, retry_max_delay_seconds=1
+    )
+    baseline = HTTPEmbeddingProvider("http://localhost/embed", "m", 2)
+    assert baseline.cache_key == provider.cache_key
+    assert provider.embed_documents(["manifest"]) == [[1, 0]]
+    assert sleeps == [1, 1]
+    assert provider.usage_stats["successful_requests"] == 1
+    assert provider.usage_stats["retries"] == provider.usage_stats["failed_requests"] == 2
+
+
+def test_invalid_vectors_are_not_retried(monkeypatch):
+    requests = []
+    install_transport(monkeypatch, {"data": [{"index": 0, "embedding": [0, 0]}]}, requests=requests)
+    provider = HTTPEmbeddingProvider("http://localhost/embed", "m", 2)
+    with pytest.raises(EmbeddingError):
+        provider.embed_query("manifest")
+    assert len(requests) == 1 and provider.usage_stats["retries"] == 0
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"max_retries": -1},
+        {"max_retries": 6},
+        {"max_retries": True},
+        {"retry_max_delay_seconds": 0},
+        {"retry_max_delay_seconds": 61},
+        {"retry_max_delay_seconds": float("nan")},
+        {"retry_max_delay_seconds": True},
+    ],
+)
+def test_retry_configuration_is_bounded(kwargs):
+    with pytest.raises(ValueError):
+        HTTPEmbeddingProvider("http://localhost/embed", "m", 2, **kwargs)
+
+
+def test_retry_after_http_dates_and_malformed_headers():
+    from datetime import UTC, datetime, timedelta
+    from email.utils import format_datetime
+
+    from k8s_explorer.embeddings import retry_after_seconds
+
+    future = format_datetime(datetime.now(UTC) + timedelta(seconds=30), usegmt=True)
+    assert 28 <= retry_after_seconds(future) <= 30
+    assert retry_after_seconds("Thu, 01 Jan 1970 00:00:00 GMT") == 0
+    for value in (None, "not a date", "NaN", "1" * 129, "-5"):
+        assert retry_after_seconds(value) is None

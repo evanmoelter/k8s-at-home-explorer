@@ -89,6 +89,8 @@ class Explorer:
                 query_prompt_name=settings.embedding_query_prompt_name,
                 document_prompt_name=settings.embedding_document_prompt_name,
                 request_timeout_seconds=settings.embedding_request_timeout_seconds,
+                max_retries=settings.embedding_max_retries,
+                retry_max_delay_seconds=settings.embedding_retry_max_delay_seconds,
             )
             if settings.embedding_url
             else None
