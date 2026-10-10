@@ -2,7 +2,13 @@
 
 The preparation includes provider adapters, a source-verified corpus exporter,
 graded judgments, BM25 and structured baselines, exact pgvector dense search,
-and reciprocal rank fusion. No provider has been selected as the service default.
+and reciprocal rank fusion. The operator selected `voyage-4` dense retrieval for
+the first working deployment on 2026-10-10; see the
+[deployment profile](deployment.md#voyage-4-deployment-profile). Further quality
+evaluation is deferred and does not block deployment.
+The [expanded calibration findings](evaluations/20261007-expanded-calibration.md)
+record the first completed hosted comparison and incomplete CPU trials, with
+report fingerprints, costs, and a proposal for broader judgments.
 See the [design](designs/20261004-embedding-evaluation.md) for the comparison and
 the [pilot evidence](evaluation.md) for the original ingestion measurements.
 
@@ -139,7 +145,7 @@ exhaustive corpus recall. Queries without positive judgments are excluded from
 relevance averages and reported separately. A retrieved negative is not itself a
 false integration claim: that metric requires an answer and reviewed claim labels.
 
-Before selecting a provider, pool candidate passages from all methods, judge them
+For a stronger future comparison, pool candidate passages from all methods, judge them
 without provider labels, review near-duplicates, and assess source-backed answers.
 Measure API cost using reported usage and dated pricing; measure server memory and
 latency with actual telemetry. Unavailable measurements remain unavailable.

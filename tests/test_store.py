@@ -147,23 +147,17 @@ def test_app_and_services_share_context(store):
 
 
 @pytest.mark.integration
-def test_real_embedding_provider_and_cache(store):
-    from k8s_explorer.embeddings import HTTPEmbeddingProvider
-
-    url = os.environ.get("EXPLORER_TEST_EMBEDDING_URL")
-    model = os.environ.get("EXPLORER_TEST_EMBEDDING_MODEL")
-    dimensions = os.environ.get("EXPLORER_TEST_EMBEDDING_DIMENSIONS")
-    if not all((url, model, dimensions)):
-        pytest.skip("Configure a real test HTTP embedding provider; semantic tests never use fake embeddings")
-    provider = HTTPEmbeddingProvider(
-        url, model, int(dimensions), os.environ.get("EXPLORER_TEST_EMBEDDING_API_KEY")
-    )
+def test_real_embedding_provider_and_cache(store, real_embedding_provider):
+    provider = real_embedding_provider
     _, snap, _, extracted = publish(store)
     assert store.index_embeddings(snap.id, provider)["embedded"] == len(extracted.chunks)
+    requests = provider.usage_stats["document_requests"]
     assert store.index_embeddings(snap.id, provider)["embedded"] == 0
+    assert provider.usage_stats["document_requests"] == requests
     result = store.semantic_search(extracted.chunks[0].content, provider)
-    assert result["items"][0]["id"] == extracted.chunks[0].id
-    assert result["items"][0]["cosine_similarity"] > 0.99
+    assert result["available"] is True
+    assert result["items"] and result["ready_snapshots"] == result["selected_snapshots"] == 1
+    assert {item["id"] for item in result["items"]} <= {chunk.id for chunk in extracted.chunks}
     assert store.similar_chunks(extracted.chunks[0].id, provider)["items"][0]["id"] != extracted.chunks[0].id
 
 

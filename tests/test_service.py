@@ -97,6 +97,8 @@ def test_provider_settings_environment_metadata_and_output_dimensions(tmp_path, 
     monkeypatch.setenv("EXPLORER_EMBEDDING_MODEL_REVISION", "pinned-model-sha")
     monkeypatch.setenv("EXPLORER_EMBEDDING_REQUESTED_DIMENSIONS", "384")
     monkeypatch.setenv("EXPLORER_EMBEDDING_REQUEST_TIMEOUT_SECONDS", "300")
+    monkeypatch.setenv("EXPLORER_EMBEDDING_MAX_RETRIES", "1")
+    monkeypatch.setenv("EXPLORER_EMBEDDING_RETRY_MAX_DELAY_SECONDS", "3")
     settings = Settings(
         corpus_dir=tmp_path,
         embedding_url="http://localhost:8080/embed",
@@ -109,6 +111,7 @@ def test_provider_settings_environment_metadata_and_output_dimensions(tmp_path, 
     assert result["protocol"] == "tei" and result["query_prompt_name"] == "query"
     assert result["model_revision"] == "pinned-model-sha" and result["requested_dimensions"] == 384
     assert result["request_timeout_seconds"] == 300
+    assert result["max_retries"] == 1 and result["retry_max_delay_seconds"] == 3
     assert "private-test-key" not in json.dumps(result)
     with pytest.raises(ValidationError, match="match"):
         Settings(embedding_url="http://localhost/embed", embedding_model="m", embedding_dimensions=1024)
@@ -118,6 +121,40 @@ def test_provider_settings_environment_metadata_and_output_dimensions(tmp_path, 
 def test_embedding_timeout_settings_are_bounded(timeout):
     with pytest.raises(ValidationError):
         Settings(embedding_request_timeout_seconds=timeout)
+
+
+def test_sync_cli_exits_unsuccessfully_for_semantic_failure(explorer, monkeypatch, capsys):
+    from k8s_explorer.cli import main
+
+    monkeypatch.setattr("k8s_explorer.service.Explorer", lambda _: explorer)
+    monkeypatch.setattr(
+        "k8s_explorer.runtime.sync_catalogue",
+        lambda *args: {
+            "items": [],
+            "failed": 1,
+            "ingestion_failed": 0,
+            "semantic_failed": 1,
+        },
+    )
+    monkeypatch.setattr(sys, "argv", ["k8s-explorer", "sync"])
+    with pytest.raises(SystemExit) as caught:
+        main()
+    assert caught.value.code == 1
+    assert json.loads(capsys.readouterr().out)["semantic_failed"] == 1
+
+
+def test_serving_cli_reports_safe_configuration_error(monkeypatch, capsys):
+    from k8s_explorer.cli import main
+
+    monkeypatch.setenv("EXPLORER_SMOKE_URL", "https://user:private-secret@example.invalid/mcp")
+    monkeypatch.setenv("EXPLORER_SMOKE_TOKEN", "private-token")
+    monkeypatch.setattr(sys, "argv", ["k8s-explorer", "check-serving"])
+    with pytest.raises(SystemExit) as caught:
+        main()
+    assert caught.value.code == 1
+    output = capsys.readouterr().err
+    assert "private" not in output
+    assert json.loads(output)["error_type"] == "ServingCheckError"
 
 
 def test_result_byte_budget_preserves_pagination():

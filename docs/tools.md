@@ -64,4 +64,11 @@ For semantic exploration, retrieve chunks with `semantic_search`, inspect their 
 
 `init-db` initializes the dedicated database. `sync` fetches and indexes a catalogue, optionally with `--limit`. `worker` repeats ingestion. `discover --topic k8s-at-home --max-pages 5` prints a YAML catalogue, with a warning for incomplete discovery. These mutations are separate from agent tools.
 
+`sync` reports ingestion and semantic failure counts separately and exits with
+status 1 for either kind of failure. A semantic failure leaves source and
+structured indexes available; semantic queries exclude that scan until its
+provider index completes. `check-serving` is a read-only authenticated HTTP MCP
+check, exposed as `mise run deploy:smoke`; it checks readiness and source evidence
+without mutating the installed service.
+
 Catalogues accept a `repositories` YAML list with `name`, HTTPS `url`, `branch`, `stars`, and `preference`, or inherited JSON tuples. Discovery records provider default branches; ingestion metadata refresh updates stars while preserving the catalogue's selected branch and preferences. Set `EXPLORER_GITHUB_TOKEN` for authenticated discovery/metadata requests. Local paths require `EXPLORER_ALLOW_LOCAL_REPOS=true` and are for disposable development fixtures.

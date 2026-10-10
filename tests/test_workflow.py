@@ -25,6 +25,27 @@ pytestmark = pytest.mark.integration
 
 
 @pytest.fixture
+def http_endpoint(workflow):
+    explorer = workflow[0]
+    with socket.socket() as listener:
+        listener.bind(("127.0.0.1", 0))
+        listener.listen()
+        server = uvicorn.Server(uvicorn.Config(create_app(explorer), host="127.0.0.1", log_level="error"))
+        thread = threading.Thread(target=server.run, kwargs={"sockets": [listener]}, daemon=True)
+        thread.start()
+        try:
+            deadline = time.monotonic() + 10
+            while not server.started and thread.is_alive() and time.monotonic() < deadline:
+                time.sleep(0.01)
+            assert server.started
+            yield f"http://127.0.0.1:{listener.getsockname()[1]}/mcp"
+        finally:
+            server.should_exit = True
+            thread.join(timeout=10)
+            assert not thread.is_alive()
+
+
+@pytest.fixture
 def workflow(tmp_path):
     url = os.environ.get("EXPLORER_TEST_DATABASE_URL")
     if not url:
@@ -298,3 +319,66 @@ def test_deleted_files_and_resources_are_absent_from_latest_tools(workflow):
     assert explorer.call("source_list_files", {"repo_id": first["repo_id"]})["items"] == []
     with pytest.raises(ToolError):
         explorer.call("source_read_file", {"repo_id": first["repo_id"], "path": resource["path"]})
+
+
+def test_semantic_failure_is_counted_without_hiding_published_source(workflow, monkeypatch, caplog):
+    from k8s_explorer.embeddings import EmbeddingError, HTTPEmbeddingProvider
+
+    explorer, catalogue, _, _ = workflow
+    explorer.provider = HTTPEmbeddingProvider("http://localhost/embed", "m", 2)
+
+    def fail(*args):
+        raise EmbeddingError("private provider message")
+
+    monkeypatch.setattr(explorer.store, "index_embeddings", fail)
+    result = sync_catalogue(explorer, catalogue)
+    assert result["failed"] == result["semantic_failed"] == 1
+    assert result["ingestion_failed"] == 0
+    assert result["items"][0]["semantic"] == {"available": False, "error_type": "EmbeddingError"}
+    assert "private" not in str(result) + caplog.text
+    assert explorer.call("structured_resources", {"app": "demo"})["items"]
+    assert explorer.call("semantic_search", {"query": "database"})["available"] is False
+
+
+async def test_real_model_authenticated_serving_and_repeat_sync_cache(
+    workflow, http_endpoint, real_embedding_provider
+):
+    from k8s_explorer.smoke import check_serving
+
+    explorer, catalogue, _, _ = workflow
+    explorer.provider = real_embedding_provider
+    first = sync_catalogue(explorer, catalogue)
+    assert first["failed"] == 0, first
+    assert first["items"][0]["semantic"]["embedded"] > 0
+    requests = real_embedding_provider.usage_stats["document_requests"]
+    second = sync_catalogue(explorer, catalogue)
+    assert second["failed"] == 0, second
+    assert second["items"][0]["semantic"]["embedded"] == 0
+    assert real_embedding_provider.usage_stats["document_requests"] == requests
+    result = await check_serving(
+        http_endpoint,
+        "workflow-token",
+        "PostgreSQL database deployed with cloudnative-pg",
+        expected_model=real_embedding_provider.model,
+        expected_dimensions=real_embedding_provider.dimensions,
+        expected_protocol=real_embedding_provider.protocol,
+    )
+    assert result["status"] == "ok" and result["verified_results"] > 0
+    assert result["ready_repositories"] == result["selected_repositories"] == 1
+
+
+async def test_serving_check_rejects_unconfigured_semantics_over_real_http(workflow, http_endpoint):
+    from k8s_explorer.smoke import ServingCheckError, check_serving
+
+    explorer, catalogue, _, _ = workflow
+    assert sync_catalogue(explorer, catalogue)["failed"] == 0
+    with pytest.raises(ServingCheckError, match="expected model"):
+        await check_serving(http_endpoint, "workflow-token", "PostgreSQL configuration")
+
+
+async def test_serving_check_wrong_bearer_returns_safe_transport_error(http_endpoint):
+    from k8s_explorer.smoke import ServingCheckError, check_serving
+
+    with pytest.raises(ServingCheckError, match="MCP transport failed") as caught:
+        await check_serving(http_endpoint, "private-wrong-token", "private query")
+    assert "private" not in str(caught.value)

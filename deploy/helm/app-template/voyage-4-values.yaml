@@ -1,0 +1,20 @@
+# Optional overlay: load after values.yaml and before installation-specific values.
+# Create EXPLORER_EMBEDDING_API_KEY in the existing explorer-credentials Secret.
+# Keep API and worker settings identical so queries use the indexed vector space.
+controllers:
+  explorer:
+    containers:
+      api:
+        env: &voyage-env
+          EXPLORER_EMBEDDING_PROTOCOL: voyage
+          EXPLORER_EMBEDDING_URL: https://api.voyageai.com/v1/embeddings
+          EXPLORER_EMBEDDING_MODEL: voyage-4
+          EXPLORER_EMBEDDING_DIMENSIONS: '1024'
+          EXPLORER_EMBEDDING_REQUESTED_DIMENSIONS: '1024'
+          EXPLORER_EMBEDDING_API_KEY:
+            valueFrom:
+              secretKeyRef:
+                name: explorer-credentials
+                key: EXPLORER_EMBEDDING_API_KEY
+      worker:
+        env: *voyage-env

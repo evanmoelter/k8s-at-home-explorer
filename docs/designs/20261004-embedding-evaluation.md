@@ -2,6 +2,12 @@
 
 ## Overview
 
+Update 2026-10-10: the operator selected `voyage-4` dense retrieval at 1,024
+dimensions for the first working deployment and deferred further relevance
+evaluation. The reviewed-holdout plan below remains a future refinement, not a
+deployment prerequisite. See D046 in [the decision log](../decisions.md) and
+[the deployment profile](../deployment.md#voyage-4-deployment-profile).
+
 The evaluation compares embedding providers on identical, source-backed questions and a frozen export of the latest successful scans. PostgreSQL/pgvector exact cosine search remains the dense baseline. Lexical retrieval, rank fusion, and reranking are measured as separate retrieval methods.
 
 ## Problem
@@ -18,7 +24,7 @@ Each question records its category, repository filters, a pattern group, graded 
 
 The adapter separates document and query requests. Cache identity includes protocol, model, declared revision, output and requested dimensions, and preprocessing. Server revision declarations are operator attestations: they do not force an endpoint to serve particular weights. Hosted model aliases cannot guarantee immutable weights; record model names, access dates, and returned metadata, and rerun references when comparing across dates.
 
-Provider preparation starts with these candidates; none is selected as the service default:
+Initial provider preparation used these candidates before the deployment choice:
 
 | Candidate | Initial configuration | Source |
 |---|---|---|
@@ -43,7 +49,11 @@ Credentials come from named environment variables and never enter artifacts. Cor
 
 ## Open questions
 
-- What endpoints, CPU/RAM allocation, and measured serving behavior will the HCC agent provide?
-- What hosted API budget and credentials are authorized for the first comparison?
+The first HCC comparison is recorded in the
+[2026-10-07 calibration findings](../evaluations/20261007-expanded-calibration.md).
+Hosted runs completed; CPU trials exposed indexing throughput limits but did not
+measure relevance. No service default was selected.
+
+- Which executor credentials and explicit spending limit govern the next hosted runs?
 - Which additional repositories and reviewed pattern groups form the final holdout?
 - Does reranking improve source-backed answers enough to justify its latency?

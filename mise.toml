@@ -33,6 +33,10 @@ file = "scripts/local-integration.sh"
 description = "Serve MCP using EXPLORER_DATABASE_URL and configured corpus"
 run = "uv run k8s-explorer serve"
 
+[tasks."deploy:smoke"]
+description = "Read-only authenticated MCP semantic readiness and exact source-evidence check"
+run = "uv run k8s-explorer check-serving"
+
 [tasks."eval:export"]
 description = "Export latest source-verified scans for retrieval evaluation"
 run = "uv run k8s-explorer eval export"
